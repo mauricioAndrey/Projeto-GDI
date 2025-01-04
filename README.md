@@ -12,7 +12,7 @@ Nesta etapa, desenvolvemos o **Modelo Entidade-Relacionamento (MER)**, identific
 - **Relacionamentos:** 
 - **Atributos:** 
 
-O diagrama ER foi construído utilizando a ferramenta EERCASE, e está disponível na pasta `proj_conceitual/`.
+O diagrama ER foi construído utilizando a ferramenta EERCASE, e está disponível na pasta `ProjConceitual/`.
 
 ### 2. Modelagem Lógica Relacional
 Com base no MER, elaboramos o **Modelo Lógico** utilizando as regras de normalização de Codd. Nesta fase, definimos:
@@ -20,7 +20,7 @@ Com base no MER, elaboramos o **Modelo Lógico** utilizando as regras de normali
 - **Atributos:** 
 - **Chaves Primárias e Estrangeiras:** 
 
-O PDF correspondente à modelagem lógica pode ser encontrado na pasta `proj_logico/`.
+O PDF correspondente à modelagem lógica pode ser encontrado na pasta `ProjLogico/`.
 
 ### 3. Implementação em SQL
 Finalmente, implementamos o banco de dados utilizando **SQL**. Nesta etapa, realizamos:
@@ -28,7 +28,7 @@ Finalmente, implementamos o banco de dados utilizando **SQL**. Nesta etapa, real
 - **Inserção de Dados:** Scripts para popular as tabelas com dados fictícios.
 - **Consultas SQL:** Exemplos de ações que podem ser realizadas.
 
-Os scripts SQL estão disponíveis na pasta `proj_fisico/`.
+Os scripts SQL estão disponíveis na pasta `ProjFisico/`.
 
 ## Referências
 - Clone este repositório:
