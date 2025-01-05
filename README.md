@@ -1,4 +1,4 @@
-# Projeto de Banco de Dados para Clínica Médica
+# Projeto de Banco de Dados
 
 Este repositório contém o projeto de banco de dados desenvolvido como parte da disciplina **IF685 - Gestão de Dados e Informação** do curso de Engenharia da Computação. O objetivo deste projeto é modelar e implementar um banco de dados, seguindo um processo dividido em três unidades: modelagem conceitual, modelagem lógica e implementação em SQL.
 
