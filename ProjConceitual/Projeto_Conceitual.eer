@@ -87,7 +87,7 @@
     <nodes xmi:type="eer:Attribute" xmi:id="_CMfu0PR7Ee-59dsocFAPmw" name="Código" comment="" isNull="false" isUnique="true" type="IDENTIFIER" dataType="INTEGER" AttributeLinkTarget="_JXNCAPR7Ee-59dsocFAPmw"/>
     <nodes xmi:type="eer:Relationship" xmi:id="_b_R48PSSEe-59dsocFAPmw" name="Compõe" AttributeLinkSource="_8E31APSVEe-59dsocFAPmw" relationshipLink="_mL-WcPSSEe-59dsocFAPmw _nQFe0PSSEe-59dsocFAPmw"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_13iwEPSVEe-59dsocFAPmw" name="Quantidade" isNull="false" dataType="INTEGER" AttributeLinkTarget="_8E31APSVEe-59dsocFAPmw"/>
-    <nodes xmi:type="eer:Attribute" xmi:id="_iQb7QPUREe-RlrM22yhlaA" name="Níveis" isNull="false" dataType="INTEGER" AttributeLinkTarget="_pEvgoPUREe-RlrM22yhlaA"/>
+    <nodes xmi:type="eer:Attribute" xmi:id="_iQb7QPUREe-RlrM22yhlaA" name="Quantidade de níveis" isNull="false" dataType="INTEGER" AttributeLinkTarget="_pEvgoPUREe-RlrM22yhlaA"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_puwuAPUREe-RlrM22yhlaA" name="Quantidade de casas" isNull="false" dataType="INTEGER" AttributeLinkTarget="_s-KpQPUREe-RlrM22yhlaA"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_IvdJcPUTEe-RlrM22yhlaA" name="Probabilidade" isNull="false" dataType="FLOAT" AttributeLinkTarget="_MjSAYPUTEe-RlrM22yhlaA"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_pWd34PUTEe-RlrM22yhlaA" name="Probabilidade" AttributeLinkTarget="_uOrkAPUTEe-RlrM22yhlaA"/>
@@ -807,7 +807,7 @@
       <styles xmi:type="notation:DescriptionStyle" xmi:id="_iQdwcfUREe-RlrM22yhlaA"/>
       <styles xmi:type="notation:FontStyle" xmi:id="_iQdwcvUREe-RlrM22yhlaA" fontName="Ubuntu"/>
       <styles xmi:type="notation:FillStyle" xmi:id="_iQdwc_UREe-RlrM22yhlaA"/>
-      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iQdwdPUREe-RlrM22yhlaA" x="-552" y="564" width="49"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iQdwdPUREe-RlrM22yhlaA" x="-588" y="564" width="145"/>
     </children>
     <children xmi:type="notation:Node" xmi:id="_puxVEPUREe-RlrM22yhlaA" type="2004" element="_puwuAPUREe-RlrM22yhlaA">
       <children xmi:type="notation:DecorationNode" xmi:id="_puxVFfUREe-RlrM22yhlaA" type="5005"/>
@@ -1574,13 +1574,6 @@
       <styles xmi:type="notation:RoutingStyle" xmi:id="_pWgUIfUTEe-RlrM22yhlaA"/>
       <styles xmi:type="notation:FontStyle" xmi:id="_pWgUIvUTEe-RlrM22yhlaA" fontName="Ubuntu"/>
       <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_pWgUI_UTEe-RlrM22yhlaA" points="[0, -20, 0, 24]$[0, -31, 0, 13]"/>
-    </edges>
-    <edges xmi:type="notation:Edge" xmi:id="_uOrkAfUTEe-RlrM22yhlaA" type="4007" element="_uOrkAPUTEe-RlrM22yhlaA" source="_pWd34fUTEe-RlrM22yhlaA" target="_lvpBkfRXEe-prMQ_6vvSlg">
-      <styles xmi:type="notation:RoutingStyle" xmi:id="_uOrkAvUTEe-RlrM22yhlaA"/>
-      <styles xmi:type="notation:FontStyle" xmi:id="_uOrkA_UTEe-RlrM22yhlaA" fontName="Ubuntu"/>
-      <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_uOrkBPUTEe-RlrM22yhlaA" points="[1, 9, -40, 0]$[30, 8, -11, -1]"/>
-      <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_uOsLEPUTEe-RlrM22yhlaA" id="(0.9117647058823529,0.4)"/>
-      <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_uOsLEfUTEe-RlrM22yhlaA" id="(0.14583333333333334,0.475)"/>
     </edges>
   </notation:Diagram>
 </xmi:XMI>
