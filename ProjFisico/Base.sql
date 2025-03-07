@@ -231,7 +231,7 @@ CREATE TABLE DROPA (
 
 -- Animal --
 CREATE TABLE ANIMAL (
-  IDC NUMBER(5), 
+  IDC NUMBER(3), 
   DOMESTICAVEL CHAR(1) NOT NULL,
   CONSTRAINT PK_ANIMAL PRIMARY KEY (IDC),
   CONSTRAINT CHK_DOMESTICAVEL CHECK (DOMESTICAVEL IN ('V', 'F')),
@@ -240,15 +240,15 @@ CREATE TABLE ANIMAL (
 
 -- Servo --
 CREATE TABLE SERVO (
-  IDC NUMBER(5),
-  ATRIBUTO VARCHAR(15),
+  IDC NUMBER(3),
+  ATRIBUTO VARCHAR(8),
   CONSTRAINT PK_SERVO PRIMARY KEY (IDC),
   CONSTRAINT FK_SERVO_IDC FOREIGN KEY (IDC) REFERENCES CRIATURA(ID) ON DELETE CASCADE
 );
 
 -- Protege --
 CREATE TABLE PROTEGE (
-  IDCS NUMBER(5),
+  IDCS NUMBER(3),
   SEED_MEF CHAR(50),
   CODIGO_EF NUMBER(5),
   CONSTRAINT PK_PROTEGE PRIMARY KEY (IDCS, SEED_MEF, CODIGO_EF),
@@ -258,7 +258,7 @@ CREATE TABLE PROTEGE (
 
 -- Chefe --
 CREATE TABLE CHEFE (
-  IDC NUMBER(5),
+  IDC NUMBER(3),
   SEED_MEF CHAR(50),
   CODIGO_EF NUMBER(5),
   CONSTRAINT PK_CHEFE PRIMARY KEY (IDC),
@@ -269,8 +269,8 @@ CREATE TABLE CHEFE (
 
 -- Atributo --
 CREATE TABLE ATRIBUTO (
-  IDCC NUMBER(5),
-  ATRIBUTO VARCHAR(15),
+  IDCC NUMBER(3),
+  ATRIBUTO VARCHAR(8),
   CONSTRAINT PK_ATRIBUTO PRIMARY KEY (IDCC),
   CONSTRAINT FK_ATRIBUTO_IDCC FOREIGN KEY (IDCC) REFERENCES CHEFE (IDC) ON DELETE CASCADE
 );
@@ -674,6 +674,7 @@ INSERT INTO MUNDO (IDS, INDICE, NOME, SEED_M) VALUES (20000, 1, 'Mundo 2-2', RPA
 INSERT INTO MUNDO (IDS, INDICE, NOME, SEED_M) VALUES (20000, 2, 'Mundo 2-3', RPAD('a', 50, 'a'));
 INSERT INTO MUNDO (IDS, INDICE, NOME, SEED_M) VALUES (30000, 0, 'Mundo 3-1', RPAD('a', 50, 'a'));
 
+--========================================================================================================================================--
 -- Estrutura --
 -- Códigod terminados em 1 - vilas, em 2 - Fortaleza, em 3 - Cidade, em 4 - Ruínas, em 5 templos. --
 
@@ -687,8 +688,8 @@ INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 51, 
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 61, 9437.59, -638.26, -365.58);
 -- Fortalezas da seed 'a' --
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 02, -684.43, -341.67, 797.56);
-INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 12, 617.73, -6571.20, -78.79);
-INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 22, -5626.50, 537.64, -394.14);
+INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 12, 617.73, -6571.20, 78.79);
+INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 22, -5626.50, 537.64, 394.14);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 32, -91.66, 2823.48, -617.49);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('a', 50, 'a'), 42, -645.22, 942.85, -152.56);
 -- Cidades da seed 'a' --
@@ -710,9 +711,9 @@ INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 21, 
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 31, 608.75, -4561.52, 1699.65);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 41, 9353.52, -875.33, -472.56);
 -- Fortalezas da seed 'b' --
-INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 02, 82.92, -1868.64, -184.89);
+INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 02, 82.92, -1868.64, 184.89);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 12, 734.47, -2578.51, -827.12);
-INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 22, 536.61, -8881.59, -908.26);
+INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 22, 536.61, -8881.59, 908.26);
 -- Cidades da seed 'b' --
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 03, -141.74, 5352.65, 32.12);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 13, -52.88, -11.52, 221.65);
@@ -727,6 +728,8 @@ INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 24, 
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 05, -2868.13, 768.37, -398.85);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 15, 806.02, -558.54, 5705.19);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 25, -389.35, -897.79, -679.10);
+-- Vila Fortaleza da seed 'b' --
+INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('b', 50, 'b'), 06, -13.02, -13.02, 48.03);
 
 -- Vilas da seed 'c' --
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('c', 50, 'c'), 01, -59.55, 326.66, 779.37);
@@ -816,35 +819,397 @@ VALUES
 -- Aldeão --
 INSERT INTO ALDEAO (SEED-MEV, CODIGO_EV, PROFISSAO)
 VALUES
-
+  
+--========================================================================================================================================--
 -- Fortaleza --
-INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS)
-VALUES
 
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('a', 50, 'a'), 02, 10);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('a', 50, 'a'), 12, 7 );
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('a', 50, 'a'), 22, 9 );
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('a', 50, 'a'), 32, 13);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('a', 50, 'a'), 42, 19);
+
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('b', 50, 'b'), 02, 11);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('b', 50, 'b'), 12, 9 );
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('b', 50, 'b'), 22, 17);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('b', 50, 'b'), 06, 1 );
+
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('c', 50, 'c'), 02, 14);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('c', 50, 'c'), 12, 16);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('c', 50, 'c'), 22, 18);
+INSERT INTO FORTALEZA (SEED_ME, CODIGO_E, QUANTIDADE_DE_NIVEIS) VALUES (RPAD('c', 50, 'c'), 32, 20);
+
+--========================================================================================================================================--
 -- Criatura --
-INSERT INTO CRIATURA (ID, NOME, DESCRICAO)
-VALUES
+  
+-- Sem atributo -- O ID termina com 0 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (000, 'Unicórnio', 'Uma criatura mística semelhante a um cavalo com um chifre mágico na testa.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (010, 'Medusa', 'Uma criatura com cabelos de serpentes que pode petrificar com o olhar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (020, 'Esqueleto Arqueiro', 'Um esqueleto reanimado que usa um arco e flechas para atacar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (030, 'Pegasus', 'Um cavalo alado que voa pelos céus.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (040, 'Centauro', 'Uma criatura metade humano, metade cavalo, conhecida por sua força e habilidade com arco.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (050, 'Esfinge', 'Uma criatura com corpo de leão e cabeça humana, conhecida por seus enigmas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (060, 'Minotauro', 'Um humanoide com cabeça de touro que habita labirintos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (070, 'Quimera', 'Uma criatura híbrida com partes de leão, cabra e dragão.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (080, 'Ciclope', 'Um gigante de um único olho que vive em cavernas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (090, 'Fomoriano', 'Uma criatura maligna da mitologia celta, conhecida por sua força e feiura.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (100, 'Lobisomem', 'Um humano que se transforma em lobo durante a lua cheia.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (110, 'Galinha', 'Uma ave doméstica conhecida por botar ovos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (120, 'Cachorro', 'Um animal doméstico leal e companheiro.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (130, 'Gato', 'Um animal doméstico independente e ágil.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (140, 'Papagaio', 'Uma ave conhecida por imitar sons e falar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (150, 'Arara', 'Uma ave colorida e barulhenta, encontrada em florestas tropicais.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (160, 'Aranha', 'Um aracnídeo que tece teias para capturar presas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (170, 'Vaca', 'Um animal doméstico criado para produção de leite e carne.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (180, 'Porco', 'Um animal doméstico criado para produção de carne.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (190, 'Ovelha', 'Um animal doméstico criado para produção de lã e carne.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (200, 'Salmão', 'Um peixe que nada contra a corrente para desovar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (210, 'Tartaruga', 'Um réptil com casco que vive em terra ou água.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (220, 'Jaguatirica', 'Um felino selvagem encontrado nas Américas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (230, 'Traça', 'Um inseto noturno conhecido por se alimentar de tecidos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (240, 'Coelho', 'Um pequeno mamífero conhecido por sua agilidade e orelhas longas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (250, 'Abelha', 'Um inseto polinizador que produz mel.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (260, 'Panda', 'Um urso tranquilo e adorável que se alimenta de bambu.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (270, 'Urso Polar', 'Um urso branco que habita regiões geladas do Ártico.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (280, 'Tatu', 'Um mamífero com uma carapaça dura que se enrola para se proteger.');
+-- Fogo -- O ID termina com 1 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (001, 'Ifrit', 'Um demônio de fogo com chamas dançando ao seu redor.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (011, 'Salamandra', 'Uma criatura reptiliana que vive em lava e emite calor intenso.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (021, 'Fênix', 'Uma ave mítica que renasce das cinzas, cercada por chamas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (031, 'Dragão de Fogo', 'Um réptil alado que cospe fogo e guarda tesouros.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (041, 'Inferno', 'Uma criatura feita de chamas puras, que consome tudo ao seu redor.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (051, 'Vulcaron', 'Um ser vulcânico que caminha sobre lava derretida.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (061, 'Chama Viva', 'Uma entidade de fogo que nunca se apaga.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (071, 'Emberclaw', 'Um predador com garras de brasa que queima suas presas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (081, 'Pyromancer', 'Um mago que domina o fogo e o usa para destruir.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (091, 'Blazehound', 'Um cão de chamas que persegue suas presas incansavelmente.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (101, 'Scorchwing', 'Uma criatura alada que deixa rastros de fogo por onde passa.');
+-- Água -- O ID termina com 2 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (002, 'Leviathan', 'Uma serpente marinha gigante que controla os mares.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (012, 'Kraken', 'Um polvo colossal que afunda navios com seus tentáculos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (022, 'Náiade', 'Um espírito aquático que habita rios e lagos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (032, 'Sereia', 'Uma criatura metade mulher, metade peixe, que encanta marinheiros.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (042, 'Tritão', 'Um guerreiro aquático que protege os oceanos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (052, 'Hydros', 'Um espírito das águas que controla correntes e marés.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (062, 'Maré Profunda', 'Uma criatura que habita as profundezas do oceano.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (072, 'Abyssal Serpent', 'Uma serpente que vive nas partes mais escuras do mar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (082, 'Coral Guardian', 'Um guardião feito de coral vivo que protege recifes.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (092, 'Tidal Beast', 'Uma fera que surge durante marés altas para caçar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (102, 'Aquarion', 'Um cavaleiro das águas que cavalga ondas gigantes.');
+-- Terra -- O ID termina com 3 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (003, 'Golem', 'Uma criatura feita de pedra ou argila, extremamente resistente.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (013, 'Ent', 'Uma árvore animada que protege as florestas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (023, 'Basilisco', 'Uma serpente petrificante que vive em cavernas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (033, 'Rock Titan', 'Um titã de pedra que guarda montanhas sagradas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (043, 'Sandworm', 'Um verme gigante que habita desertos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (053, 'Crystal Guardian', 'Um guardião feito de cristais brilhantes.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (063, 'Mountain King', 'Um rei que governa as montanhas mais altas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (073, 'Stoneclaw', 'Uma fera com garras de pedra que esmaga seus inimigos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (083, 'Terraton', 'Um colosso da terra que causa terremotos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (093, 'Cragbeast', 'Uma fera que habita penhascos e desfiladeiros.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (103, 'Geomancer', 'Um mago que controla a terra e suas forças.');
+-- Ar -- O ID termina com 4 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (004, 'Sylph', 'Um espírito do vento, ágil e invisível.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (014, 'Tufão', 'Um dragão alado que controla tempestades.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (024, 'Harpia', 'Uma criatura metade mulher, metade ave, que domina os céus.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (034, 'Zephyr', 'Um vento suave que pode se tornar uma tempestade furiosa.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (044, 'Sky Serpent', 'Uma serpente que voa pelos céus e controla o vento.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (054, 'Aetherwing', 'Uma criatura alada feita de ar puro.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (064, 'Galeclaw', 'Uma fera com garras que cortam como furacões.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (074, 'Windrider', 'Um cavaleiro que cavalga os ventos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (084, 'Cloudstrider', 'Um andarilho que caminha sobre as nuvens.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (094, 'Tempest', 'Uma tempestade viva que destrói tudo em seu caminho.');
+-- Gelo -- O ID termina com 5 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (005, 'Yeti', 'Um monstro gigante que habita montanhas geladas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (015, 'Wendigo', 'Um espírito maligno do frio e da fome.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (025, 'Frost Wyrm', 'Um dragão de gelo que congela tudo ao seu redor.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (035, 'Ice Phoenix', 'Uma fênix que renasce do gelo.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (045, 'Glacier Guardian', 'Um guardião que protege as geleiras eternas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (055, 'Snowstalker', 'Um predador que caça na neve.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (065, 'Frostbite', 'Uma criatura que congela suas presas com um toque.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (075, 'Cryomancer', 'Um mago que domina o gelo e o frio.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (085, 'Iceshard', 'Uma criatura feita de estilhaços de gelo.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (095, 'Winterclaw', 'Uma fera com garras de gelo que cortam como facas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (105, 'Blizzardborn', 'Uma criatura nascida no coração de uma nevasca.');
+-- Raio -- O ID termina com 6 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (006, 'Raiju', 'Um lobo elétrico que surge durante tempestades.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (016, 'Thors Wrath', 'Um espírito de trovão que lança raios.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (026, 'Thunderclaw', 'Uma fera com garras que soltam raios.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (036, 'Lightning Drake', 'Um dragão que cospe relâmpagos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (046, 'Voltwing', 'Uma criatura alada que gera eletricidade.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (056, 'Stormrider', 'Um cavaleiro que cavalga tempestades.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (066, 'Electromancer', 'Um mago que controla a eletricidade.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (076, 'Thunderstrike', 'Uma criatura que ataca com golpes de trovão.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (086, 'Boltbeast', 'Uma fera que corre na velocidade de um raio.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (096, 'Shockwave', 'Uma criatura que emite ondas de choque elétricas.');
+-- Luz -- O ID termina com 7 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (007, 'Serafim', 'Um anjo radiante que usa luz para purificar.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (017, 'Luminaris', 'Uma fada de luz que ilumina caminhos escuros.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (027, 'Solarion', 'Um guerreiro celestial que empunha uma espada de luz.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (037, 'Radiant Knight', 'Um cavaleiro que brilha com a luz do sol.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (047, 'Sunflare', 'Uma criatura que emite clarões cegantes.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (057, 'Dawnbringer', 'Um portador da aurora que dissipa as trevas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (067, 'Lightweaver', 'Um tecelão que cria teias de luz.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (077, 'Holy Sentinel', 'Uma sentinela que protege lugares sagrados.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (087, 'Glowwing', 'Uma criatura alada que brilha no escuro.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (097, 'Celestial Guardian', 'Um guardião que vive nas estrelas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (107, 'Beacon', 'Uma criatura que guia os perdidos com sua luz.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (117, 'Starborn', 'Uma criatura nascida da luz das estrelas.');
+-- Trevas -- O ID termina com 8 --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (008, 'Shadow Beast', 'Uma fera que se move nas sombras.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (018, 'Necromante', 'Um mago que controla os mortos e a escuridão.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (028, 'Dullahan', 'Um cavaleiro sem cabeça que cavalga nas noites escuras.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (038, 'Nightshade', 'Uma sombra que se alimenta do medo.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (048, 'Voidwalker', 'Um andarilho que viaja pelo vácuo das trevas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (058, 'Darkclaw', 'Uma fera com garras que cortam a escuridão.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (068, 'Umbra', 'Uma sombra profunda que consome a luz.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (078, 'Soulreaper', 'Um ceifador de almas que vagueia nas trevas.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (088, 'Ebonwing', 'Uma criatura alada feita de escuridão pura.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (098, 'Nightmare', 'Um pesadelo que se materializa na escuridão.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (108, 'Abyssal Fiend', 'Um demônio que habita o abismo.');
+-- Atributos mistos -- O ID termina com 9 --
+-- Fogo, Ar e Terra --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (009, 'Magmaroth', 'Uma mariposa gigante que voa sobre rios de magma.');
+-- Fogo, Água e Gelo --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (019, 'Frostfire Drake', 'Um dragão que combina os poderes do água, gelo e fogo, criando uma força devastadora.');
+-- Fogo e Raio --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (029, 'Thunderstrike Phoenix', 'Uma fênix que renasce das cinzas com o poder do trovão, capaz de controlar tempestades.');
+-- Fogo e Água --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (039, 'Tidal Inferno', 'Uma criatura que combina o poder das marés com chamas intensas, criando um inferno aquático.');
+-- Fogo e Trevas --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (049, 'Shadowflame Wraith', 'Um espectro que manipula chamas sombrias, queimando tudo em seu caminho.');
+-- Água e Gelo --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (059, 'Frostwhirl', 'Um redemoinho gelado que congela tudo ao seu redor.');
+-- Água e Terra --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (069, 'Mud Golem', 'Um golem feito de lama que afunda seus inimigos.');
+-- Água e Luz --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (079, 'Radiant Kraken', 'Um kraken que brilha com luz celestial, capaz de iluminar as profundezas do oceano.');
+-- Terra e Trevas --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (089, 'Obsidian Golem', 'Um golem feito de obsidiana negra.');
+-- Terra e Raio --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (099, 'Stormclaw Golem', 'Um golem feito de tempestades, com garras que cortam como raios.');
+-- Terra e Luz --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (109, 'Lunar Basilisk', 'Um basilisco que usa o poder da lua para petrificar suas presas.');
+-- Ar e Raio --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (119, 'Stormcaller', 'Um invocador de tempestades que controla raios e ventos.');
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (129, 'Thunderbird', 'Um pássaro do trovão que traz tempestades.');
+-- Gelo e Luz --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (139, 'Aurora Beast', 'Uma fera que brilha como as luzes do norte.');
+-- Raio e Trevas --
+INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (149, 'Sparkfiend', 'Um demônio que manipula faíscas elétricas.');
 
+--========================================================================================================================================--
 -- Dropa --
+
 INSERT INTO DROPA (IDC, IDI, PROBABILIDADE)
 VALUES
 
+--========================================================================================================================================--
 -- Animal --
-INSERT INTO ANIMAL (IDC, DOMESTICAVEL)
-VALUES
+  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (110, 'V');  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (120, 'V');  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (130, 'V');  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (140, 'V');  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (150, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (170, 'V'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (180, 'V');  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (190, 'V');  
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (200, 'F');
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (210, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (220, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (230, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (240, 'V'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (250, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (260, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (270, 'F'); 
+INSERT INTO ANIMAL (IDC, DOMESTICAVEL) VALUES (280, 'F');
 
+--========================================================================================================================================--
 -- Servo --
-INSERT INTO SERVO (IDC, ATRIBUTO)
-VALUES
 
+-- Sem atributo (IDs terminam com 0) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (000, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (010, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (020, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (030, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (040, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (050, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (060, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (070, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (080, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (090, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (100, NULL);
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (160, NULL); 
+-- Fogo (IDs terminam com 1) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (001, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (011, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (021, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (031, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (041, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (051, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (061, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (071, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (081, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (091, 'Fogo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (101, 'Fogo');
+-- Água (IDs terminam com 2) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (002, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (012, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (022, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (032, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (042, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (052, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (062, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (072, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (082, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (092, 'Água');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (102, 'Água');
+-- Terra (IDs terminam com 3) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (003, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (013, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (023, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (033, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (043, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (053, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (063, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (073, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (083, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (093, 'Terra');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (103, 'Terra');
+-- Ar (IDs terminam com 4) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (004, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (014, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (024, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (034, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (044, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (054, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (064, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (074, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (084, 'Ar');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (094, 'Ar');
+-- Gelo (IDs terminam com 5) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (005, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (015, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (025, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (035, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (045, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (055, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (065, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (075, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (085, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (095, 'Gelo');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (105, 'Gelo');
+-- Raio (IDs terminam com 6) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (006, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (016, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (026, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (036, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (046, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (056, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (066, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (076, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (086, 'Raio');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (096, 'Raio');
+-- Luz (IDs terminam com 7) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (007, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (017, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (027, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (037, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (047, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (057, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (067, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (077, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (087, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (097, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (107, 'Luz');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (117, 'Luz');
+-- Trevas (IDs terminam com 8) --
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (008, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (018, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (028, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (038, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (048, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (058, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (068, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (078, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (088, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (098, 'Trevas');
+INSERT INTO SERVO (IDC, ATRIBUTO) VALUES (108, 'Trevas');
+
+--========================================================================================================================================--
 -- Protege --
 INSERT INTO PROTEGE (IDCS, SEED_MEF, CODIGO_EF)
 VALUES
 
+--========================================================================================================================================--
 -- Chefe --
-INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF)
-VALUES
-
+-- Falta os dados das fortalezas -- (meio que o chefe vai determinar o "tipo" da fortaleza, ent uma fortaleza que tem o chefe com atributo de fogo e agua, os servos nela vão ser de fogo, água ou não vão ter atributou)
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (009, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (019, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (029, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (039, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (049, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (059, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (069, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (079, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (089, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (099, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (109, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (119, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (129, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (139, );
+INSERT INTO CHEFE (IDC, SEED_MEF, CODIGO_EF) VALUES (149, );
+  
+--========================================================================================================================================--
 -- Atributo --
-INSERT INTO ATRIBUTO (IDCC, ATRIBUTO)
-VALUES
+  
+-- Magmaroth (Fogo, Ar e Terra) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (009, 'Fogo');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (009, 'Ar');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (009, 'Terra');
+-- Frostfire Drake (Fogo, Água e Gelo) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (019, 'Fogo');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (019, 'Água');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (019, 'Gelo');
+-- Thunderstrike Phoenix (Fogo e Raio) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (029, 'Fogo');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (029, 'Raio');
+-- Tidal Inferno (Fogo e Água) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (039, 'Fogo');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (039, 'Água');
+-- Shadowflame Wraith (Fogo e Trevas) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (049, 'Fogo');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (049, 'Trevas');
+-- Frostwhirl (Água e Gelo) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (059, 'Água');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (059, 'Gelo');
+-- Mud Golem (Água e Terra) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (069, 'Água');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (069, 'Terra');
+-- Radiant Kraken (Água e Luz) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (079, 'Água');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (079, 'Luz');
+-- Obsidian Golem (Terra e Trevas) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (089, 'Terra');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (089, 'Trevas');
+-- Stormclaw Golem (Terra e Raio) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (099, 'Terra');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (099, 'Raio');
+-- Lunar Basilisk (Terra e Luz) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (109, 'Terra');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (109, 'Luz');
+-- Stormcaller (Ar e Raio) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (119, 'Ar');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (119, 'Raio');
+-- Thunderbird (Ar e Raio) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (129, 'Ar');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (129, 'Raio');
+-- Aurora Beast (Gelo e Luz) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (139, 'Gelo');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (139, 'Luz');
+-- Sparkfiend (Raio e Trevas) --
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (149, 'Raio');
+INSERT INTO ATRIBUTO (IDCC, ATRIBUTO) VALUES (149, 'Trevas');
+
+--========================================================================================================================================--
