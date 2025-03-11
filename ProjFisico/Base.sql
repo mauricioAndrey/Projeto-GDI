@@ -2,10 +2,6 @@
 -- Projeto Físico - Data Definition Language (DDL) --
 ----------------------------------------------------
 
--- !! IMPORTANTE !!
--- Não colocar comentário do lado dos comandos, o oracle não aceita e dá erro
--- Ex: INSERT INTO... -- isso isso e aquilo -- (não pode, errado, dá erro)
-
 --========================================================================================================================================--
 -- Jogador --
 CREATE TABLE JOGADOR (
@@ -141,11 +137,13 @@ CREATE TABLE POSSUI (
   IDJ NUMBER(5),
   IDI NUMBER(5),
   IDSM NUMBER(5),  
-  INDICE_M NUMBER(5),  
+  INDICE_M NUMBER(5)
+  QUANTIDADE NUMBER(2),  
   CONSTRAINT PK_POSSUI PRIMARY KEY (IDJ, IDI, IDSM, INDICE_M),
   CONSTRAINT FK_POSSUI_IDJ FOREIGN KEY (IDJ) REFERENCES JOGADOR (ID) ON DELETE CASCADE,
   CONSTRAINT FK_POSSUI_IDI FOREIGN KEY (IDI) REFERENCES ITEM (ID) ON DELETE CASCADE,
-  CONSTRAINT FK_POSSUI_IDSM_INDICE_M FOREIGN KEY (IDSM, INDICE_M) REFERENCES MUNDO (IDS, INDICE) ON DELETE CASCADE
+  CONSTRAINT FK_POSSUI_IDSM_INDICE_M FOREIGN KEY (IDSM, INDICE_M) REFERENCES MUNDO (IDS, INDICE) ON DELETE CASCADE,
+  CONSTRAINT CHK_QUANTIDADE_POSIT CHECK (QUANTIDADE > 0)
 );
 
 -- Compõe --
@@ -196,7 +194,7 @@ CREATE TABLE ALDEAO (
   SEED_MEV CHAR(50),
   CODIGO_EV NUMBER(2),
   PROFISSAO VARCHAR(20) NOT NULL,
-  CONSTRAINT PK_ALDEAO PRIMARY KEY (SEED_MEV, CODIGO_EV),
+  CONSTRAINT PK_ALDEAO PRIMARY KEY (SEED_MEV, CODIGO_EV, PROFISSAO),
   CONSTRAINT FK_ALDEAO_SEED_MEV FOREIGN KEY (SEED_MEV, CODIGO_EV) REFERENCES VILA (SEED_ME, CODIGO_E) ON DELETE CASCADE
 );
 
@@ -619,16 +617,11 @@ INSERT INTO SERVIDOR (ID, NOME, TIPO, SENHA) VALUES (30000, 'ForMe', '1', 'RyanP
 --========================================================================================================================================--
 -- Punição --
 
-INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO)
-VALUES (11000, 'Nível 1', 'O castigado é proibido de utilizar o chat por 2 horas', 2);
-INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) 
-VALUES (22000, 'Nível 2', 'O castigado é proibido de utilizar o chat e alguns canais de voz por 6 horas', 6);
-INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) 
-VALUES (33000, 'Nível 3', 'O castigado é proibido de utilizar o chat, alguns canais de voz e alguns recursos do jogo por 12 horas', 12);
-INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) 
-VALUES (44000, 'Nível 4', 'O castigado é proibido de utilizar o chat, todos os canais de voz e não pode acessar o servidor por 24 horas', 24);
-INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) 
-VALUES (55000, 'Banido', 'O jogador é banido permanentemente do servidor, até que seja desbanido', -2);
+INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) VALUES (11000, 'Nível 1', 'O castigado é proibido de utilizar o chat por 2 horas', 2);
+INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) VALUES (22000, 'Nível 2', 'O castigado é proibido de utilizar o chat e alguns canais de voz por 6 horas', 6);
+INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) VALUES (33000, 'Nível 3', 'O castigado é proibido de utilizar o chat, alguns canais de voz e alguns recursos do jogo por 12 horas', 12);
+INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) VALUES (44000, 'Nível 4', 'O castigado é proibido de utilizar o chat, todos os canais de voz e não pode acessar o servidor por 24 horas', 24);
+INSERT INTO PUNICAO (CODIGO, NOME, DESCRICAO, DURACAO) VALUES (55000, 'Banido', 'O jogador é banido permanentemente do servidor, até que seja desbanido', -2);
 
 --========================================================================================================================================--
 -- Acesso --
@@ -636,6 +629,7 @@ VALUES (55000, 'Banido', 'O jogador é banido permanentemente do servidor, até 
 INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (10101, 10000, 0, TO_TIMESTAMP('03-03-2025 18:36:11', 'DD-MM-YYYY HH24:MI:SS'));
 INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (20202, 10000, 2, TO_TIMESTAMP('06-03-2025 16:53:23', 'DD-MM-YYYY HH24:MI:SS'));
 INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (20202, 20000, 1, TO_TIMESTAMP('05-03-2025 12:32:17', 'DD-MM-YYYY HH24:MI:SS'));
+INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (30303, 10000, 2, TO_TIMESTAMP('03-03-2025 14:06:13', 'DD-MM-YYYY HH24:MI:SS'));
 INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (30303, 20000, 2, TO_TIMESTAMP('04-03-2025 21:06:14', 'DD-MM-YYYY HH24:MI:SS'));
 INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (40404, 20000, 0, TO_TIMESTAMP('02-03-2025 12:00:43', 'DD-MM-YYYY HH24:MI:SS'));
 INSERT INTO ACESSO (IDJ, IDS, AUTORIDADE, ULTIMO_ACESSO) VALUES (40404, 10000, 1, TO_TIMESTAMP('03-03-2025 15:32:01', 'DD-MM-YYYY HH24:MI:SS'));
@@ -757,84 +751,979 @@ INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('c', 50, 'c'), 34, 
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('c', 50, 'c'), 05, 694.40, -4667.75, 6737.27);
 INSERT INTO ESTRUTURA (SEED_M, CODIGO, X, Y, Z) VALUES (RPAD('c', 50, 'c'), 15, -5510.04, 720.98, -576.66);
 
--- Acima disso já tá tudo pronto e eu tentei deixar o mais consistente os dados em diferentes tabelas... pfvr n mudem ;3 --
--- Testamos a parte a cima no oracle e funcionou certinho :3 --
 --========================================================================================================================================--
--- A partir daqui tem apenas o esqueleto, falta acrescentar coisa ;3 --
+-- Items --
+-- Entre 10300 a 10399 são ferramentas, entre 10400 a 10499 são vestimentas, entre 10500 a 10599 são materias, entre 10600 a 10699 são consumiveis --
 
--- Item --
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10111, 'Ferramenta', 'Picareta de Pedra', 'Usada para minerar');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10112, 'Ferramenta', 'Espada de Pedra', 'Usada para atacar criaturas');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10121, 'Consumível', 'Maçã', 'Recupera a vida');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10122, 'Consumível', 'Carne', 'Recupera a vida');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10131, 'Vestimenta', 'Capacete de Ferro', 'Protege o jogador');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10132, 'Vestimenta', 'Peitoral de Ferro', 'Protege o jogador');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10133, 'Vestimenta', 'Botas de Ferro', 'Protege o jogador');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10141, 'Material', 'Madeira', 'Usado para criar outros itens');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10142, 'Material', 'Pedra', 'Usado para criar outros itens');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10143, 'Material', 'Ferro', 'Usado para criar outros itens');
+-- Ferramentas de Madeira --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10301, 'Ferramenta', 'Enxada de Madeira', 'Usada para arar a terra e plantar sementes. Eficiência: 2');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10302, 'Ferramenta', 'Picareta de Madeira', 'Usada para minerar blocos mais fracos. Eficiência: 2');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10303, 'Ferramenta', 'Espada de Madeira', 'Causa dano básico a criaturas. Eficiência: 2');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10304, 'Ferramenta', 'Machado de Madeira', 'Usado para cortar árvores. Eficiência: 2');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10305, 'Ferramenta', 'Foice de Madeira', 'Usada para coletar plantas e folhagens. Eficiência: 2');
+-- Ferramentas de Pedra --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10311, 'Ferramenta', 'Enxada de Pedra', 'Usada para arar a terra com mais eficiência. Eficiência: 4');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10312, 'Ferramenta', 'Picareta de Pedra', 'Usada para minerar blocos mais resistentes. Eficiência: 4');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10313, 'Ferramenta', 'Espada de Pedra', 'Causa mais dano que a espada de madeira. Eficiência: 4');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10314, 'Ferramenta', 'Machado de Pedra', 'Corta árvores mais rapidamente. Eficiência: 4');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10315, 'Ferramenta', 'Foice de Pedra', 'Coleta plantas e folhagens com mais eficiência. Eficiência: 4');
+-- Ferramentas de Cobre --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10321, 'Ferramenta', 'Enxada de Cobre', 'Usada para arar a terra, com eficiência moderada. Eficiência: 5');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10322, 'Ferramenta', 'Picareta de Cobre', 'Usada para minerar, com eficiência moderada. Eficiência: 5');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10323, 'Ferramenta', 'Espada de Cobre', 'Causa dano moderado a criaturas. Eficiência: 5');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10324, 'Ferramenta', 'Machado de Cobre', 'Corta árvores com eficiência moderada. Eficiência: 5');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10325, 'Ferramenta', 'Foice de Cobre', 'Coleta plantas e folhagens com eficiência moderada. Eficiência: 5');
+-- Ferramentas de Ferro --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10331, 'Ferramenta', 'Enxada de Ferro', 'Usada para arar a terra com alta eficiência. Eficiência: 7');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10332, 'Ferramenta', 'Picareta de Ferro', 'Usada para minerar blocos mais resistentes. Eficiência: 7');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10333, 'Ferramenta', 'Espada de Ferro', 'Causa dano alto a criaturas. Eficiência: 7');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10334, 'Ferramenta', 'Machado de Ferro', 'Corta árvores rapidamente. Eficiência: 7');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10335, 'Ferramenta', 'Foice de Ferro', 'Coleta plantas e folhagens com alta eficiência. Eficiência: 7');
+-- Ferramentas de Ouro --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10341, 'Ferramenta', 'Enxada de Ouro', 'Usada para arar a terra com máxima eficiência, mas é frágil. Eficiência: 9');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10342, 'Ferramenta', 'Picareta de Ouro', 'Usada para minerar rapidamente, mas é frágil. Eficiência: 9');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10343, 'Ferramenta', 'Espada de Ouro', 'Causa dano moderado, mas é frágil. Eficiência: 9');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10344, 'Ferramenta', 'Machado de Ouro', 'Corta árvores rapidamente, mas é frágil. Eficiência: 9');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10345, 'Ferramenta', 'Foice de Ouro', 'Coleta plantas e folhagens rapidamente, mas é frágil. Eficiência: 9');
+-- Ferramentas de Diamante --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10351, 'Ferramenta', 'Enxada de Diamante', 'Usada para arar a terra com máxima eficiência. Eficiência: 10');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10352, 'Ferramenta', 'Picareta de Diamante', 'Usada para minerar blocos extremamente resistentes. Eficiência: 10');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10353, 'Ferramenta', 'Espada de Diamante', 'Causa dano extremamente alto a criaturas. Eficiência: 10');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10354, 'Ferramenta', 'Machado de Diamante', 'Corta árvores com máxima eficiência. Eficiência: 10');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10355, 'Ferramenta', 'Foice de Diamante', 'Coleta plantas e folhagens com máxima eficiência. Eficiência: 10');
+-- Ferramentas encantadas --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10361, 'Ferramenta', 'Enxada de Hera', 'Uma enxada divina, forjada com as bênçãos de Hera, deusa do lar e da fertilidade. Capaz de arar a terra com extrema precisão, transformando solos áridos em campos férteis. Eficiência: 11. "A terra floresce sob o toque de Hera."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10362, 'Ferramenta', 'Picareta de Hefesto', 'Uma picareta lendária, infundida com o poder de Hefesto, deus do fogo e da metalurgia. Capaz de minerar os mais resistentes minérios e blocos com facilidade, como se fossem argila. Eficiência: 11. "Nenhuma pedra resiste ao poder do ferreiro divino."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10363, 'Ferramenta', 'Espada de Atena', 'Uma espada sagrada, abençoada por Atena, deusa da sabedoria e da guerra estratégica. Causa dano devastador a criaturas, combinando força e precisão letal. Eficiência: 11. "A lâmina da sabedoria corta até os inimigos mais resistentes."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10364, 'Ferramenta', 'Machado de Gaia', 'Um machado poderoso, imbuído com a energia de Gaia, a mãe Terra. Capaz de derrubar árvores gigantescas com um único golpe, mantendo o equilíbrio entre a natureza e o progresso. Eficiência: 11. "A força da Terra reside em cada corte."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10365, 'Ferramenta', 'Foice de Osiris', 'Uma foice divina, abençoada por Osiris, deus da agricultura e da vida após a morte. Coleta plantas e folhagens com extrema eficiência, garantindo colheitas abundantes e renovação constante. Eficiência: 11. "A colheita é eterna sob o olhar de Osiris."');
 
+-- Vestimentas de Couro --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10401, 'Vestimenta', 'Capacete de Couro', 'Proteção básica para a cabeça. +1 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10402, 'Vestimenta', 'Peitoral de Couro', 'Proteção básica para o torso. +3 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10403, 'Vestimenta', 'Calça de Couro', 'Proteção básica para as pernas. +2 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10404, 'Vestimenta', 'Bota de Couro', 'Proteção básica para os pés. +1 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10405, 'Acessório', 'Cinto de Couro', 'Aumenta o espaço no inventário. +1 de proteção');
+-- Vestimentas de Malha (Cota de Malha) --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10411, 'Vestimenta', 'Capacete de Malha', 'Proteção moderada para a cabeça. +2 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10412, 'Vestimenta', 'Peitoral de Malha', 'Proteção moderada para o torso. +5 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10413, 'Vestimenta', 'Calça de Malha', 'Proteção moderada para as pernas. +4 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10414, 'Vestimenta', 'Bota de Malha', 'Proteção moderada para os pés. +2 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10415, 'Acessório', 'Braçadeira de Malha', 'Aumenta a defesa contra ataques corpo a corpo. +1 de proteção');
+-- Vestimentas de Ouro --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10421, 'Vestimenta', 'Capacete de Ouro', 'Proteção alta para a cabeça, mas é frágil. +3 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10422, 'Vestimenta', 'Peitoral de Ouro', 'Proteção alta para o torso, mas é frágil. +7 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10423, 'Vestimenta', 'Calça de Ouro', 'Proteção alta para as pernas, mas é frágil. +6 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10424, 'Vestimenta', 'Bota de Ouro', 'Proteção alta para os pés, mas é frágil. +3 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10425, 'Acessório', 'Anel de Ouro', 'Aumenta a regeneração de vida. +1 de proteção');
+-- Vestimentas de Ferro --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10431, 'Vestimenta', 'Capacete de Ferro', 'Proteção alta para a cabeça. +4 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10432, 'Vestimenta', 'Peitoral de Ferro', 'Proteção alta para o torso. +8 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10433, 'Vestimenta', 'Calça de Ferro', 'Proteção alta para as pernas. +7 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10434, 'Vestimenta', 'Bota de Ferro', 'Proteção alta para os pés. +4 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10435, 'Acessório', 'Amuleto de Ferro', 'Aumenta a resistência a danos. +2 de proteção');
+-- Vestimentas de Diamante --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10441, 'Vestimenta', 'Capacete de Diamante', 'Proteção máxima para a cabeça. +5 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10442, 'Vestimenta', 'Peitoral de Diamante', 'Proteção máxima para o torso. +10 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10443, 'Vestimenta', 'Calça de Diamante', 'Proteção máxima para as pernas. +9 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10444, 'Vestimenta', 'Bota de Diamante', 'Proteção máxima para os pés. +5 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10445, 'Acessório', 'Colar de Diamante', 'Aumenta a defesa geral e a durabilidade das armaduras. +3 de proteção');
+-- Vestimentas encantadas --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10451, 'Vestimenta', 'Capacete de Bastet', 'Um capacete sagrado, abençoado por Bastet, deusa da proteção e dos felinos. Forjado para oferecer defesa máxima à cabeça, este item carrega a agilidade e a astúcia de um gato. Ideal para enfrentar os perigos mais sombrios. +8 de proteção. "A cabeça erguida, protegida pela garra da deusa."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10452, 'Vestimenta', 'Peitoral de Bastet', 'Um peitoral divino, imbuído com a força protetora de Bastet. Projetado para cobrir o torso, oferece resistência incomparável contra ataques físicos e mágicos. Usado pela deusa para guardar seu lar contra invasores. +13 de proteção. "O coração guardado pela fúria da protetora."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10453, 'Vestimenta', 'Calça de Bastet', 'Calças encantadas, feitas com as bênçãos de Bastet. Proporcionam proteção máxima às pernas, permitindo movimentos ágeis e precisos, como os de um felino em combate. +11 de proteção. "As pernas ágeis, guiadas pela graça da deusa."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10454, 'Vestimenta', 'Bota de Bastet', 'Botas sagradas, abençoadas por Bastet. Oferecem proteção extrema aos pés, combinando leveza e resistência. Permitem pisar silenciosamente, como uma sombra, e suportar os terrenos mais difíceis. +7 de proteção. "Passos silenciosos, protegidos pela pata da guardiã."');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10455, 'Acessório', 'Amuleto de Bastet', 'Um amuleto poderoso, carregado com a energia protetora de Bastet. Aumenta a defesa geral e a durabilidade das armaduras, garantindo que o usuário esteja sempre resguardado. +3 de proteção. "A proteção eterna da deusa felina está com você."');
+
+-- Acessórios especiais --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10461, 'Acessório', 'Anel de Esmeralda', 'Aumenta a sorte ao minerar. +1 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10462, 'Acessório', 'Pingente de Redstone', 'Aumenta a velocidade de mineração. +1 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10463, 'Acessório', 'Brincos de Lápis-Lazúli', 'Aumenta a experiência ganha. +1 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10464, 'Acessório', 'Tiara de Quartzo', 'Aumenta a resistência a efeitos mágicos. +2 de proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10465, 'Acessório', 'Cinto de Netherite', 'Aumenta a resistência a danos explosivos. +3 de proteção');
+
+-- Materiais gerais --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10501, 'Material', 'Madeira', 'Usada para criar ferramentas e itens básicos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10502, 'Material', 'Pedra', 'Usada para criar ferramentas e armaduras mais resistentes');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10503, 'Material', 'Cobre', 'Usado para criar ferramentas e itens decorativos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10504, 'Material', 'Ferro', 'Usado para criar ferramentas e armaduras de alta qualidade');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10505, 'Material', 'Ouro', 'Usado para criar ferramentas e armaduras rápidas, mas frágeis');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10506, 'Material', 'Diamante', 'Usado para criar ferramentas e armaduras de máxima eficiência');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10507, 'Material', 'Couro', 'Usado para criar armaduras leves e acessórios');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10508, 'Material', 'Malha', 'Usada para criar armaduras moderadamente resistentes');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10509, 'Material', 'Esmeralda', 'Usada para trocar com aldeões e criar acessórios especiais');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10510, 'Material', 'Redstone', 'Usada para criar mecanismos e acessórios mágicos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10511, 'Material', 'Lápis-Lazúli', 'Usado para encantar ferramentas e armaduras');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10512, 'Material', 'Quartzo', 'Usado para criar blocos decorativos e acessórios');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10513, 'Material', 'Rubi', 'Usado para criar acessórios poderosos e armaduras especiais');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10514, 'Material', 'Ametista', 'Usada para criar itens mágicos e decoração');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10515, 'Material', 'Topázio', 'Usado para criar joias e acessórios de alto valor');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10516, 'Material', 'Jade', 'Usado para criar itens de sorte e proteção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10517, 'Material', 'Calcita', 'Usada para criar blocos decorativos e itens de construção');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10518, 'Material', 'Mármore', 'Usado para criar estruturas e decorações luxuosas');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10519, 'Material', 'Arenito', 'Usado para construção e decoração rústica');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10520, 'Material', 'Granito', 'Usado para criar estruturas resistentes e decoração');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10521, 'Material', 'Calcário', 'Usado para construção e decoração clássica');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10522, 'Material', 'Obsidiana', 'Usada para criar portais e estruturas extremamente resistentes');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10523, 'Material', 'Fragmento Prismático', 'Usado na criação de ferramentas e vestimentas encantadas, que guardam as bençãos dos deuses');
+
+-- Itens Consumíveis (Comidas) ----------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10601, 'Consumível', 'Ovo', 'Recupera 1 ponto de vida. Usado para fazer várias receitas');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10602, 'Consumível', 'Queijo', 'Recupera 4 pontos de vida. Usado para fazer várias receitas');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10603, 'Consumível', 'Salmão cru', 'Recupera 4 pontos de vida. Usado para fazer salmão assado');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10604, 'Consumível', 'Carne de porco crua', 'Recupera 3 pontos de vida. Usada para fazer carne de porco assada');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10605, 'Consumível', 'Carne de vaca crua', 'Recupera 3 pontos de vida. Usada para fazer carne de vaca assada');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10606, 'Consumível', 'Carne de porco assada', 'Recupera 8 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10607, 'Consumível', 'Farinha', 'Recupera 2 pontos de vida. Usada para fazer várias receitas');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10608, 'Consumível', 'Chocolate', 'Recupera 3 pontos de vida. Usado para fazer bolo de chocolate');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10609, 'Consumível', 'Arroz', 'Recupera 4 pontos de vida. Usado para fazer sushi');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10610, 'Consumível', 'Alga', 'Recupera 2 pontos de vida. Usada para fazer sushi');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10611, 'Consumível', 'Carne de vaca assada', 'Recupera 8 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10612, 'Consumível', 'Frango cru', 'Recupera 3 pontos de vida. Usado para fazer frango assado.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10613, 'Consumível', 'Frango assado', 'Recupera 8 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10614, 'Consumível', 'Grãos de Café', 'Recupera 1 ponto de vida. Usado para fazer café');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10615, 'Consumível', 'Folhas de Chá', 'Recupera 1 ponto de vida. Usado para fazer chá verde');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10616, 'Consumível', 'Cogumelo', 'Recupera 3 pontos de vida, Usado para fazer sopa de cogumelos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10617, 'Consumível', 'Peixe cru', 'Recupera 2 pontos de vida. Usado para fazer ceviche e sopa de peixe');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10618, 'Consumível', 'Feijão', 'Recupera 4 pontos de vida. Usado para fazer várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10619, 'Consumível', 'Leite', 'Recupera 2 pontos de vida. Usado para fazer queijo e várias receitas');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10620, 'Consumível', 'Açúcar', 'Recupera 3 pontos de vida. Usado para fazer várias receitas');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10621, 'Consumível', 'Água de coco', 'Recupera 6 pontos de vida, aumenta a resistência por 1 minuto.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10622, 'Consumível', 'Pão', 'Recupera 5 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10623, 'Consumível', 'Vinho','Recupera 8 pontos de vida e diminui a velocidade por 2 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10624, 'Consumível', 'Sopa de Cogumelo', 'Recupera 10 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10625, 'Consumível', 'Bolo', 'Recupera 14 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10626, 'Consumível', 'Peixe Assado', 'Recupera 6 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10627, 'Consumível', 'Cenoura Dourada', 'Recupera 12 pontos de vida e aumenta a visão noturna por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10628, 'Consumível', 'Melancia', 'Recupera 4 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10629, 'Consumível', 'Batata Assada', 'Recupera 7 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10630, 'Consumível', 'Cookies', 'Recupera 6 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10631, 'Consumível', 'Omelete de Queijo', 'Recupera 10 pontos de vida e aumenta a resistência por 2 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10632, 'Consumível', 'Salmão Assado', 'Recupera 15 pontos de vida e aumenta a resistência por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10633, 'Consumível', 'Torta de Mirtilo', 'Recupera 12 pontos de vida e aumenta a sorte por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10634, 'Consumível', 'Sopa de Tomate', 'Recupera 8 pontos de vida e aumenta a velocidade de mineração por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10635, 'Consumível', 'Pimenta Recheada', 'Recupera 10 pontos de vida e aumenta a velocidade de movimento por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10636, 'Consumível', 'Pizza', 'Recupera 18 pontos de vida e aumenta a defesa por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10637, 'Consumível', 'Bolo de Chocolate', 'Recupera 20 pontos de vida e aumenta a velocidade de movimento por 2 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10638, 'Consumível', 'Sushi', 'Recupera 12 pontos de vida e aumenta a chance de pesca por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10639, 'Consumível', 'Caldinho', 'Recupera 14 pontos de vida e aumenta a regeneração por 1 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10640, 'Consumível', 'Espaguete', 'Recupera 16 pontos de vida e aumenta a velocidade de mineração por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10641, 'Consumível', 'Cartola', 'Recupera 10 pontos de vida e aumenta a resistência por 2 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10642, 'Consumível', 'Geleia de amora', 'Recupera 8 pontos de vida e aumenta a sorte por 1 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10643, 'Consumível', 'Café', 'Recupera 3 pontos de vida. Aumenta a velocidade de movimento por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10644, 'Consumível', 'Chá Verde', 'Recupera 5 pontos de vida e aumenta a regeneração por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10645, 'Consumível', 'Torta de Abóbora', 'Recupera 18 pontos de vida e aumenta a defesa por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10646, 'Consumível', 'Almoço brasileiro', 'Recupera 14 pontos de vida e aumenta a resistência por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10647, 'Consumível', 'Feijoada', 'Recupera 25 pontos de vida e aumenta o ataque por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10648, 'Consumível', 'Cuscuz', 'Recupera 20 pontos de vida e aumenta a defesa por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10649, 'Consumível', 'Sopa de Peixe', 'Recupera 16 pontos de vida e aumenta a resistência por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10650, 'Consumível', 'Torta de Morango', 'Recupera 12 pontos de vida e aumenta a sorte por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10651, 'Consumível', 'Maçã', 'Recupera 2 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10652, 'Consumível', 'Banana', 'Recupera 3 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10653, 'Consumível', 'Laranja', 'Recupera 2 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10654, 'Consumível', 'Morango', 'Recupera 3 pontos de vida. Usado para fazer torta de morango.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10655, 'Consumível', 'Uva', 'Recupera 3 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10656, 'Consumível', 'Pêssego', 'Recupera 3 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10657, 'Consumível', 'Cereja', 'Recupera 2 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10658, 'Consumível', 'Limão', 'Recupera 1 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10659, 'Consumível', 'Abacaxi', 'Recupera 3 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10660, 'Consumível', 'Cenoura', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10661, 'Consumível', 'Batata', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10662, 'Consumível', 'Tomate', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10663, 'Consumível', 'Milho', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10664, 'Consumível', 'Abóbora', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10665, 'Consumível', 'Melão', 'Recupera 4 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10666, 'Consumível', 'Coco', 'Recupera 2 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10667, 'Consumível', 'Framboesa', 'Recupera 1 pontos de vida. Usada para fazer torta de mirtilo.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10668, 'Consumível', 'Mirtilo', 'Recupera 1 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10669, 'Consumível', 'Amora', 'Recupera 3 pontos de vida. Usado para fazer geleia');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10670, 'Consumível', 'Pimenta', 'Recupera 3 pontos de vida. Usado para fazer pimenta recheada.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10671, 'Consumível', 'Alface', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10672, 'Consumível', 'Repolho', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10673, 'Consumível', 'Brócolis', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10674, 'Consumível', 'Cebola', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10675, 'Consumível', 'Alho', 'Recupera 3 pontos de vida. Usado em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10676, 'Consumível', 'Alcachofra', 'Recupera 3 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10677, 'Consumível', 'Manjericão', 'Recupera 1 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10678, 'Consumível', 'Salsa', 'Recupera 1 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10679, 'Consumível', 'Coentro', 'Recupera 2 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10680, 'Consumível', 'Gengibre', 'Recupera 2 pontos de vida. Usada em várias receitas.');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10681, 'Consumível', 'Trigo', 'Usado em várias receitas');
+-- Itens Consumíveis (Poções) --
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10681, 'Consumível', 'Poção de Cura', 'Recupera 20 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10682, 'Consumível', 'Poção de Força', 'Aumenta o dano causado em 50% por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10683, 'Consumível', 'Poção de Velocidade', 'Aumenta a velocidade de movimento em 30% por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10684, 'Consumível', 'Poção de Regeneração', 'Regenera 1 ponto de vida a cada 2 segundos por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10685, 'Consumível', 'Poção de Resistência ao Fogo', 'Concede imunidade ao fogo por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10686, 'Consumível', 'Poção de Invisibilidade', 'Torna o jogador invisível por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10687, 'Consumível', 'Poção de Salto', 'Aumenta a altura do salto em 50% por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10688, 'Consumível', 'Poção de Respiração Aquática', 'Permite respirar debaixo dagua por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10689, 'Consumível', 'Poção de Veneno', 'Causa dano de veneno por 45 segundos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10690, 'Consumível', 'Poção de Cura Instantânea', 'Recupera 10 pontos de vida instantaneamente');
+
+--========================================================================================================================================--
 -- Possui --
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (10101, 10111, 10000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (10101, 10112, 10000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (10101, 10141, 10000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (10101, 10122, 10000, 1);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (20202, 10141, 10000, 1);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (20202, 10112, 20000, 2);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (20202, 10121, 20000, 2);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (20202, 10141, 20000, 2);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (20202, 10142, 20000, 2);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (20202, 10143, 20000, 2);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10111, 20000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10112, 20000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10121, 20000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10122, 20000, 0);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10111, 20000, 1);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10132, 20000, 1);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10133, 20000, 1);
-INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M) VALUES (30303, 10141, 20000, 2);
--- FALTA ADD O POSSUI DAS OUTRAS PESSOAS --
+-- Cada jogador poderá possuir até 8 itens + vestimentas + 2 acessórios --
 
+-- Mundo 1-0 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10681, 10000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10682, 10000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10651, 10000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10622, 10000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10363, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10431, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10442, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10443, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10444, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10445, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10681, 10000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10682, 10000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10636, 10000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10633, 10000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10343, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10421, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10422, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10423, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10424, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10425, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10681, 10000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10682, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10651, 10000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10635, 10000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10354, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10431, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10432, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10443, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10434, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10435, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10681, 10000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10682, 10000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10651, 10000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10624, 10000, 0, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10333, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10411, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10432, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10423, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10424, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10425, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 10000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 10000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10651, 10000, 0, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10622, 10000, 0, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10363, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10442, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10445, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10681, 10000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10682, 10000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10630, 10000, 0, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10669, 10000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10333, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10421, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10432, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10443, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10434, 10000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10425, 10000, 0, 1);
+-- Mundo 1-1 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10681, 10000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10682, 10000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10683, 10000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10655, 10000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10363, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10431, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10442, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10443, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10444, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(10101, 10445, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10681, 10000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10682, 10000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10656, 10000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10678, 10000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10343, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10421, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10422, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10423, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10424, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10425, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10634, 10000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10680, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10653, 10000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10636, 10000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10354, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10431, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10432, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10443, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10434, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10435, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10681, 10000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10681, 10000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10646, 10000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10624, 10000, 1, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10333, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10411, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10432, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10423, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10424, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10425, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 10000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 10000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10651, 10000, 1, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10622, 10000, 1, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10363, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10442, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10445, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10681, 10000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10682, 10000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10634, 10000, 1, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10623, 10000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10333, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10421, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10432, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10443, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10434, 10000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(60606, 10425, 10000, 1, 1);
+-- Mundo 2-0 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10681, 20000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10682, 20000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10645, 20000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10667, 20000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10343, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10421, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10422, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10423, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10424, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10425, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10681, 20000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10682, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10645, 20000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10654, 20000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10354, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10431, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10432, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10443, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10434, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10435, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10681, 20000, 0, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10682, 20000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10653, 20000, 0, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10657, 20000, 0, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10333, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10411, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10432, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10423, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10424, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10425, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 20000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 20000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10667, 20000, 0, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10643, 20000, 0, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10363, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10442, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 20000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10445, 20000, 0, 1);
+-- Mundo 2-1 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10681, 20000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10682, 20000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10610, 20000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10613, 20000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10343, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10421, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10422, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10423, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10424, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10425, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10681, 20000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10614, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10606, 20000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10635, 20000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10354, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10431, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10432, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10443, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10434, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10435, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10681, 20000, 1, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10682, 20000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10683, 20000, 1, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10684, 20000, 1, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10333, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10411, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10432, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10423, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10424, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10425, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 20000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 20000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10658, 20000, 1, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10657, 20000, 1, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10363, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10442, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 20000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10445, 20000, 1, 1);
+-- Mundo 2-2 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10681, 20000, 2, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10682, 20000, 2, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10636, 20000, 2, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10633, 20000, 2, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10343, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10421, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10422, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10423, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10424, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(20202, 10425, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10681, 20000, 2, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10682, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10651, 20000, 2, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10635, 20000, 2, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10354, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10431, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10432, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10443, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10434, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(30303, 10435, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10681, 20000, 2, 3);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10682, 20000, 2, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10651, 20000, 2, 2);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10624, 20000, 2, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10333, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10411, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10432, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10423, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10424, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(40404, 10425, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 20000, 2, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 20000, 2, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10651, 20000, 2, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10622, 20000, 2, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10363, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10442, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 20000, 2, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10445, 20000, 2, 1);
+-- Mundo 3-0 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 30000, 0, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 30000, 0, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10651, 30000, 0, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10622, 30000, 0, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10363, 30000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10365, 30000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 30000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10452, 30000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 30000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 30000, 0, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10455, 30000, 0, 1);
+-- Mundo 3-1 --
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10681, 30000, 1, 5);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10682, 30000, 1, 4);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10651, 30000, 1, 7);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10622, 30000, 1, 15);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10362, 30000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10451, 30000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10452, 30000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10453, 30000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10454, 30000, 1, 1);
+INSERT INTO POSSUI (IDJ, IDI, IDSM, INDICE_M, QUANTIDADE) VALUES(50505, 10445, 30000, 1, 1);
+
+--========================================================================================================================================--
 -- Compõe --
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10141, 10111, 2);
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10141, 10112, 2);
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10142, 10111, 3);
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10142, 10112, 2);
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10143, 10131, 5);
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10143, 10132, 8);
-INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10143, 10133, 4);
 
+-- Ferramentas de Madeira --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10301, 4); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10302, 5);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10303, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10304, 5); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10305, 4); 
+-- Ferramentas de Pedra --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10502, 10311, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10311, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10502, 10312, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10312, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10502, 10313, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10313, 1);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10502, 10314, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10314, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10502, 10315, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10315, 2);
+-- Ferramentas de Cobre --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10503, 10321, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10321, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10503, 10322, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10322, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10503, 10323, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10323, 1);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10503, 10324, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10324, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10503, 10325, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10325, 2);
+-- Ferramentas de Ferro --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10331, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10331, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10332, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10332, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10333, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10333, 1);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10334, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10334, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10335, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10335, 2);
+-- Ferramentas de Ouro --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10341, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10341, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10342, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10342, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10343, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10343, 1);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10344, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10344, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10345, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10345, 2);
+-- Ferramentas de Diamante --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10351, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10351, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10352, 3); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10352, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10353, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10353, 1);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10354, 3);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10354, 2);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10355, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10501, 10355, 2);
+-- Ferramentas encantadas --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10351, 10361, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10361, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10361, 10); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10361, 35);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10517, 10361, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10519, 10361, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10520, 10361, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10521, 10361, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10361, 8 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10361, 5 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10352, 10362, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10362, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10362, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10362, 15); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10362, 40);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10512, 10362, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10362, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10514, 10362, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10515, 10362, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10362, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10362, 8 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10362, 5 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10353, 10363, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10363, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10363, 30); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10363, 35); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10363, 70);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10512, 10363, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10363, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10517, 10363, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10518, 10363, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10363, 8 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10363, 5 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10354, 10364, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10364, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10364, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10364, 25); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10364, 30); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10364, 55);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10515, 10364, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10364, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10364, 8 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10364, 5 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10355, 10365, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10365, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10365, 40); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10365, 35); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10365, 55);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10365, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10518, 10365, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10521, 10365, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10365, 8 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10365, 5 ); 
+
+-- Vestimentas de Couro --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10507, 10401, 5); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10507, 10402, 8);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10507, 10403, 7); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10507, 10404, 4); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10507, 10405, 3); 
+-- Vestimentas de Malha --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10411, 5); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10412, 8); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10413, 7); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10414, 4); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10415, 3); 
+-- Vestimentas de Ouro --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10421, 5); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10422, 8);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10423, 7);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10424, 4);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10425, 3); 
+-- Vestimentas de Ferro --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10431, 5); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10432, 8); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10433, 7); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10434, 4); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10504, 10435, 3); 
+-- Vestimentas de Diamante --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10441, 5); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10442, 8); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10443, 7); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10444, 4); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10445, 3); 
+-- Vestimentas encantadas --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10441, 10451, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10451, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10451, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10451, 50);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10452, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10451, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10451, 35);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10451, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10451, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10451, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10451, 10); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10442, 10452, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10452, 70); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10452, 100); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10452, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10452, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10452, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10452, 50);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10452, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10452, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10452, 25); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10452, 10); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10443, 10453, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10453, 60); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10453, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10453, 50); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10453, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10453, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10453, 50);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10453, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10453, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10453, 25); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10453, 10); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10444, 10454, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10454, 30); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10454, 40); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10454, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10454, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10454, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10454, 50);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10454, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10454, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10454, 15); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10454, 10); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10445, 10455, 1 ); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10505, 10455, 70); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10506, 10455, 30); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10508, 10455, 20); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10509, 10455, 200); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10510, 10455, 60); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10511, 10455, 50);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10513, 10455, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10516, 10455, 80); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10522, 10455, 15); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10523, 10455, 15); 
+
+-- Itens Consumíveis (Comidas)--
+-- Queijo --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10619, 10602, 1);
+-- Carne de porco assada --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10604, 10606, 1);
+-- Farinha --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10681, 10607, 4);
+-- Vinho --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10619, 10623, 5);
+-- Sopa de Cogumelos --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10619, 10624, 2);
+-- Bolo --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10604, 10625, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10625, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10620, 10625, 1); 
+-- Peixe Assado --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10619, 10626, 2);
+-- Cenoura Dourada --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10619, 10627, 2);
+-- Batata Assada --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10619, 10629, 2);
+-- Cookie --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10601, 10630, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10602, 10630, 1); 
+-- Omelete de Queijo --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10601, 10631, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10602, 10631, 1); 
+-- Salmão Assado --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10603, 10632, 1); 
+-- Torta de Mirtilo --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10604, 10633, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10633, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10668, 10633, 1); 
+-- Sopa de Tomate --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10662, 10634, 3); 
+-- Pimenta Recheada --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10670, 10635, 1);
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10602, 10635, 1); 
+-- Pizza --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10636, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10602, 10636, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10662, 10636, 1); 
+-- Bolo de Chocolate --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10637, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10608, 10637, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10620, 10637, 1); 
+-- Sushi --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10609, 10638, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10610, 10638, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10603, 10638, 1); 
+-- Caldinho --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10618, 10639, 3); 
+-- Espaguete --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10640, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10662, 10640, 1); 
+-- Cartola --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10641, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10662, 10641, 1); 
+-- Geleia de Amora --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10669, 10642, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10620, 10642, 1); 
+-- Café --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10614, 10643, 1); 
+-- Chá Verde --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10615, 10644, 1); 
+-- Torta de Abóbora --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10664, 10645, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10645, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10620, 10645, 1); 
+-- Almoço Brasileiro --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10618, 10646, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10609, 10646, 2);  
+-- Feijoada --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10618, 10647, 6); 
+-- Cuscuz --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10663, 10648, 3); 
+-- Sopa de Peixe --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10617, 10649, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10662, 10649, 1); 
+-- Torta de Morango --
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10618, 10650, 2); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10607, 10650, 1); 
+INSERT INTO COMPOE (IDMP, IDP, QUANTIDADE) VALUES (10620, 10650, 1); 
+
+-- Terminar de fazer: vinho (10623), sopa de cogumelo (10624), bolo (10625), peixe assado(10626), cenoura dourada(10627), batata assada(10629), cookies(10630), cartola(10641), --
+
+--========================================================================================================================================--
 -- Baú --
-INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE)
-VALUES
 
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00001, 'Madeira', 15);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00002, 'Cobre', 15);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00003, 'Bronze', 15);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00004, 'Ferro', 15);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00005, 'Ouro', 15);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00006, 'Diamante', 16);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00016, 'Diamante', 16);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00026, 'Diamante', 16);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00036, 'Diamante', 16);
+INSERT INTO BAU (CODIGO, RARIDADE, CAPACIDADE) VALUES (00007, 'Lendário', 16);
+
+--========================================================================================================================================--
 -- Guarda --
-INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE)
-VALUES
 
--- A partir daqui falta apenas a povoar a tabela drova e colocar os códigos dos baús de cada vila (lembrando que não pode existir baú sem ele tá em uma vila) --
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10301, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10401, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10601, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10602, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10603, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10604, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10605, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10681, 00001, 0.47);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10682, 00001, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10683, 00001, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10501, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10502, 00001, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10507, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10508, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10509, 00001, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10321, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10411, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10606, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10607, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10608, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10609, 00002, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10610, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10684, 00002, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10685, 00002, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10686, 00002, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10503, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10504, 00002, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10510, 00002, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10511, 00002, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10512, 00002, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10331, 00003, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10421, 00003, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10611, 00003, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10612, 00003, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10613, 00003, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10614, 00003, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10615, 00003, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10687, 00003, 0.47);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10688, 00003, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10689, 00003, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10513, 00003, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10514, 00003, 0.67);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10515, 00003, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10516, 00003, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10517, 00003, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10341, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10431, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10616, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10617, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10618, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10619, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10620, 00004, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10690, 00004, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10681, 00004, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10682, 00004, 0.47); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10518, 00004, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10519, 00004, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10520, 00004, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10521, 00004, 0.67);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10522, 00004, 0.37); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10341, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10421, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10621, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10622, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10623, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10624, 00005, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10625, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10683, 00005, 0.53); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10684, 00005, 0.53); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10685, 00005, 0.53); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10505, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10506, 00005, 0.37); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10507, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10508, 00005, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10352, 00006, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10442, 00006, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10626, 00006, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10627, 00006, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10628, 00006, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10629, 00006, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10630, 00006, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10686, 00006, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10687, 00006, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10688, 00006, 0.57);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10509, 00006, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10510, 00006, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10511, 00006, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10512, 00006, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10513, 00006, 0.77);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10461, 00006, 0.10); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10354, 00016, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10444, 00016, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10636, 00016, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10637, 00016, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10638, 00016, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10639, 00016, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10640, 00016, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10682, 00016, 0.57);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10683, 00016, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10684, 00016, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10519, 00016, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10520, 00016, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10521, 00016, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10522, 00016, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10523, 00016, 0.01); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10463, 00016, 0.10); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10355, 00026, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10445, 00026, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10641, 00026, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10642, 00026, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10643, 00026, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10644, 00026, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10645, 00026, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10685, 00026, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10686, 00026, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10687, 00026, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10505, 00026, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10506, 00026, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10507, 00026, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10508, 00026, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10509, 00026, 0.67); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10464, 00026, 0.10); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10351, 00036, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10441, 00036, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10646, 00036, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10647, 00036, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10648, 00036, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10649, 00036, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10650, 00036, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10688, 00036, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10689, 00036, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10690, 00036, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10510, 00036, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10511, 00036, 0.57); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10512, 00036, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10513, 00036, 0.77); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10514, 00036, 0.77);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10465, 00036, 0.10); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10353, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10443, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10631, 00007, 1.00);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10632, 00007, 1.00); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10633, 00007, 1.00); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10634, 00007, 1.00); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10635, 00007, 1.00);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10689, 00007, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10690, 00007, 0.91); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10681, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10514, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10515, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10516, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10517, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10518, 00007, 0.97);
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10505, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10506, 00007, 0.97);  
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10510, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10511, 00007, 0.97); 
+INSERT INTO GUARDA (IDI, CODIGO_B, PROBABILIDADE) VALUES (10462, 00007, 0.10);
+
 --========================================================================================================================================--
 -- Vila --
   
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 01, 8 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 11, 10, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 21, 11, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 31, 6 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 41, 8 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 51, 12, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 61, 5 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 01, 9 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 11, 10, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 21, 12, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 31, 15, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 41, 13, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 06, 12, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 01, 11, NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 11, 6 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 21, 8 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 31, 7 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 41, 9 , NULL);
-INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 51, 10, NULL);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 01, 8 , 00001);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 11, 10, 00002);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 21, 11, 00026);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 31, 6 , 00004);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 41, 8 , 00036);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 51, 12, 00006);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('a', 50, 'a'), 61, 5 , 00016);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 01, 9 , 00002);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 11, 10, 00016);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 21, 12, 00003);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 31, 15, 00005);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 41, 13, 00006);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('b', 50, 'b'), 06, 12, 00007);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 01, 11, 00036);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 11, 6 , 00005);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 21, 8 , 00026);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 31, 7 , 00004);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 41, 9 , 00003);
+INSERT INTO VILA (SEED_ME, CODIGO_E, QUANTIDADE_CASAS, CODIGO_B) VALUES (RPAD('c', 50, 'c'), 51, 10, 00001);
 
 --========================================================================================================================================--
 -- Aldeão --
@@ -1224,8 +2113,19 @@ INSERT INTO CRIATURA (ID, NOME, DESCRICAO) VALUES (149, 'Sparkfiend', 'Um demôn
 --========================================================================================================================================--
 -- Dropa --
 
-INSERT INTO DROPA (IDC, IDI, PROBABILIDADE)
-VALUES
+-- FALTA COMPLETAR ESSA TABELA --
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (000, 10507, 0.400); 
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (000, 10508, 0.400); 
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (000, 10681, 0.050);  
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (000, 10682, 0.050); 
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (000, 10683, 0.050);  
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (000, 10523, 0.001);  
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (010, 10507, 0.400); 
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (010, 10508, 0.400); 
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (010, 10681, 0.050);  
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (010, 10682, 0.050);  
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (010, 10683, 0.050);  
+INSERT INTO DROPA (IDC, IDI, PROBABILIDADE) VALUES (010, 10523, 0.001);  
 
 --========================================================================================================================================--
 -- Animal --
