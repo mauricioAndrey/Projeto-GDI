@@ -125,7 +125,7 @@ CREATE TABLE ITEM (
   ID NUMBER(5),
   TIPO VARCHAR(50) NOT NULL,
   NOME VARCHAR(50) NOT NULL,
-  DESCRICAO VARCHAR(200),
+  DESCRICAO VARCHAR(300),
   CONSTRAINT PK_ITEM PRIMARY KEY (ID)
 );
 
@@ -942,16 +942,16 @@ INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10679, 'Consumível', 'Coen
 INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10680, 'Consumível', 'Gengibre', 'Recupera 2 pontos de vida. Usada em várias receitas.');
 INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10681, 'Consumível', 'Trigo', 'Usado em várias receitas');
 -- Itens Consumíveis (Poções) --
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10681, 'Consumível', 'Poção de Cura', 'Recupera 20 pontos de vida');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10682, 'Consumível', 'Poção de Força', 'Aumenta o dano causado em 50% por 3 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10683, 'Consumível', 'Poção de Velocidade', 'Aumenta a velocidade de movimento em 30% por 3 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10684, 'Consumível', 'Poção de Regeneração', 'Regenera 1 ponto de vida a cada 2 segundos por 5 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10685, 'Consumível', 'Poção de Resistência ao Fogo', 'Concede imunidade ao fogo por 3 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10686, 'Consumível', 'Poção de Invisibilidade', 'Torna o jogador invisível por 3 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10687, 'Consumível', 'Poção de Salto', 'Aumenta a altura do salto em 50% por 3 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10688, 'Consumível', 'Poção de Respiração Aquática', 'Permite respirar debaixo dagua por 5 minutos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10689, 'Consumível', 'Poção de Veneno', 'Causa dano de veneno por 45 segundos');
-INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10690, 'Consumível', 'Poção de Cura Instantânea', 'Recupera 10 pontos de vida instantaneamente');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10682, 'Consumível', 'Poção de Cura', 'Recupera 20 pontos de vida');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10683, 'Consumível', 'Poção de Força', 'Aumenta o dano causado em 50% por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10684, 'Consumível', 'Poção de Velocidade', 'Aumenta a velocidade de movimento em 30% por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10685, 'Consumível', 'Poção de Regeneração', 'Regenera 1 ponto de vida a cada 2 segundos por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10686, 'Consumível', 'Poção de Resistência ao Fogo', 'Concede imunidade ao fogo por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10687, 'Consumível', 'Poção de Invisibilidade', 'Torna o jogador invisível por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10688, 'Consumível', 'Poção de Salto', 'Aumenta a altura do salto em 50% por 3 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10689, 'Consumível', 'Poção de Respiração Aquática', 'Permite respirar debaixo dagua por 5 minutos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10690, 'Consumível', 'Poção de Veneno', 'Causa dano de veneno por 45 segundos');
+INSERT INTO ITEM (ID, TIPO, NOME, DESCRICAO) VALUES (10691, 'Consumível', 'Poção de Cura Instantânea', 'Recupera 10 pontos de vida instantaneamente');
 
 --========================================================================================================================================--
 -- Possui --
