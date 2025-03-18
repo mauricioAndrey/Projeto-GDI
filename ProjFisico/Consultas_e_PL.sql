@@ -89,6 +89,20 @@ INNER JOIN DROPA D ON C.ID = D.IDC
 WHERE D.IDI = '10522'
 ORDER BY P.CODIGO_EF ASC, S.ATRIBUTO ASC;
 
+-- Quais os mundos por servidor? -- (JUNÇÃO EXTERNA / GROUP BY) -- Cleber
+SELECT 
+    S.ID AS ID_SERVIDOR,
+    S.NOME AS NOME_SERVIDOR,
+    COUNT(M.INDICE) AS NUMERO_DE_MUNDOS
+FROM 
+    SERVIDOR S
+LEFT JOIN 
+    MUNDO M ON S.ID = M.IDS
+GROUP BY 
+    S.ID, S.NOME
+ORDER BY 
+    S.ID;
+
 CREATE OR REPLACE TRIGGER TRG_ATUALIZA_TEMPO_ACUMULADO
 BEFORE INSERT ON SESSAO
 FOR EACH ROW
@@ -187,4 +201,39 @@ BEGIN
     END IF;
   END IF;
 END;
-/
+
+-- Verifica se um jogador conseguiu pegar 8 itens diferentes para obter uma conquista - Cleber
+CREATE OR REPLACE TRIGGER TRG_CONQUISTA_20_ITENS
+AFTER INSERT OR UPDATE ON POSSUI
+FOR EACH ROW
+DECLARE
+    v_count_itens NUMBER;
+    v_codigo_conquista NUMBER := 1; -- Código da conquista que será concedida, pode colocar qualquer NUMBER aqui
+BEGIN
+    -- Conta quantos itens diferentes o jogador possui
+    SELECT COUNT(DISTINCT IDI)
+    INTO v_count_itens
+    FROM POSSUI
+    WHERE IDJ = :NEW.IDJ;
+
+    -- Se o jogador possuir 8 itens diferentes, concede a conquista
+    IF v_count_itens >= 8 THEN
+        -- Verifica se o jogador já não possui essa conquista
+        BEGIN
+            INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+            VALUES (:NEW.IDJ, v_codigo_conquista, SYSDATE);
+        EXCEPTION
+            WHEN DUP_VAL_ON_INDEX THEN NULL;
+        END;
+    END IF;
+END;
+
+-- Trigger para exemplificar o log de erro. Se um jogador for amigo dele mesmo, a inserção é bloqueada - Cleber
+CREATE OR REPLACE TRIGGER TRG_EVITAR_AMIZADE_CONSIGO_MESMO
+BEFORE INSERT ON AMIZADE
+FOR EACH ROW
+BEGIN
+    IF :NEW.IDJ1 = :NEW.IDJ2 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Um jogador não pode ser amigo de si mesmo.');
+    END IF;
+END;
