@@ -1,0 +1,53 @@
+-- Checa se um jogador possui 10 amigos. Se sim, desbloqueia a conquista - LUCAS
+CREATE OR REPLACE TRIGGER TRIG_DESBLOQUEAR_CONQUISTA
+AFTER INSERT ON AMIZADE
+FOR EACH ROW
+DECLARE
+    num_amigos NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO num_amigos
+    FROM AMIZADE
+    WHERE IDJ1 = :NEW.IDJ1 OR IDJ2 = :NEW.IDJ1;
+
+    IF num_amigos = 10 THEN
+        INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB) VALUES (:NEW.IDJ1, 22223, SYSDATE);
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE obter_drope_por_idi_proc(
+    p_idi IN VARCHAR2
+) IS
+BEGIN
+    FOR r IN 
+    (SELECT C.NOME, 
+            S.ATRIBUTO, 
+            TO_CHAR(P.CODIGO_EF, '000') AS CÓDIGO_MASMORRA, 
+            TO_CHAR(D.PROBABILIDADE, '0.99') AS PROBABILIDADE_DROPE
+     FROM PROTEGE P 
+     INNER JOIN SERVO S ON P.IDCS = S.IDC
+     INNER JOIN CRIATURA C ON C.ID = S.IDC
+     INNER JOIN DROPA D ON C.ID = D.IDC
+     WHERE D.IDI = p_idi
+     ORDER BY P.CODIGO_EF ASC, S.ATRIBUTO ASC)
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('Nome: '  r.NOME  ', Atributo: '  r.ATRIBUTO  
+                             ', Código: '  r.CÓDIGO_MASMORRA  ', Probabilidade: ' || r.PROBABILIDADE_DROPE);
+    END LOOP;
+END obter_drope_por_idi_proc;
+
+CREATE OR REPLACE TRIGGER TRG_ATUALIZA_TEMPO_ACUMULADO
+BEFORE INSERT ON SESSAO
+FOR EACH ROW
+DECLARE
+    V_TEMPO_ANTERIOR NUMBER(6,2);
+BEGIN
+    -- Soma o tempo de todas as sessões anteriores do mesmo jogador
+    SELECT NVL(SUM(DURACAO), 0)
+    INTO V_TEMPO_ANTERIOR
+    FROM SESSAO
+    WHERE IDJ = :NEW.IDJ AND INICIO < :NEW.INICIO;
+
+    -- Atualiza o campo TEMPO_ACUMULADO na nova linha inserida
+    :NEW.TEMPO_ACUMULADO := V_TEMPO_ANTERIOR + :NEW.DURACAO;
+END;
