@@ -143,3 +143,48 @@ BEGIN
     END IF;
 END;
 /
+
+-- Verifica o tempo acumulado para acrescentar uma conquista em desbloqueia - Juliana
+CREATE OR REPLACE TRIGGER trg_check_tempo_acumulado
+AFTER INSERT OR UPDATE OF TEMPO_ACUMULADO ON SESSAO
+FOR EACH ROW
+DECLARE
+  t_check NUMBER := 0; 
+BEGIN
+  -- Conquista 100 horas
+  IF :NEW.TEMPO_ACUMULADO >= 100 THEN
+    SELECT COUNT() INTO t_check
+    FROM DESBLOQUEIA
+    WHERE IDJ = :NEW.IDJ AND CODIGO_C = 33331;
+
+    IF t_check = 0 THEN
+      INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+      VALUES (:NEW.IDJ, 33331, SYSDATE);
+    END IF;
+  END IF;
+
+  -- Conquista 400 horas
+  IF :NEW.TEMPO_ACUMULADO >= 400 THEN
+    SELECT COUNT() INTO t_check
+    FROM DESBLOQUEIA
+    WHERE IDJ = :NEW.IDJ AND CODIGO_C = 33332;
+
+    IF t_check = 0 THEN
+      INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+      VALUES (:NEW.IDJ, 33332, SYSDATE);
+    END IF;
+  END IF;
+
+  -- Conquista 2000 horas
+  IF :NEW.TEMPO_ACUMULADO >= 2000 THEN
+    SELECT COUNT(*) INTO t_check
+    FROM DESBLOQUEIA
+    WHERE IDJ = :NEW.IDJ AND CODIGO_C = 33333;
+
+    IF t_check = 0 THEN
+      INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+      VALUES (:NEW.IDJ, 33333, SYSDATE);
+    END IF;
+  END IF;
+END;
+/
