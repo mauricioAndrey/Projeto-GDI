@@ -89,6 +89,22 @@ INNER JOIN DROPA D ON C.ID = D.IDC
 WHERE D.IDI = '10522'
 ORDER BY P.CODIGO_EF ASC, S.ATRIBUTO ASC;
 
+CREATE OR REPLACE TRIGGER TRG_ATUALIZA_TEMPO_ACUMULADO
+BEFORE INSERT ON SESSAO
+FOR EACH ROW
+DECLARE
+    V_TEMPO_ANTERIOR NUMBER(6,2);
+BEGIN
+    -- Soma o tempo de todas as sessões anteriores do mesmo jogador
+    SELECT NVL(SUM(DURACAO), 0)
+    INTO V_TEMPO_ANTERIOR
+    FROM SESSAO
+    WHERE IDJ = :NEW.IDJ AND INICIO < :NEW.INICIO;
+
+    -- Atualiza o campo TEMPO_ACUMULADO na nova linha inserida
+    :NEW.TEMPO_ACUMULADO := V_TEMPO_ANTERIOR + :NEW.DURACAO;
+END;
+
 -- Quais os nomes das criaturas, juntamente com seu atributo e localização, que dropam um certo item com sua respectiva probabilidade 
 CREATE OR REPLACE PROCEDURE obter_drope_por_idi_proc(
     p_idi IN VARCHAR2
