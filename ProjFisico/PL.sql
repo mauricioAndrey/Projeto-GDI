@@ -32,7 +32,7 @@ BEGIN
      ORDER BY P.CODIGO_EF ASC, S.ATRIBUTO ASC)
     LOOP
         DBMS_OUTPUT.PUT_LINE('Nome: '  r.NOME  ', Atributo: '  r.ATRIBUTO  
-                             ', Código: '  r.CÓDIGO_MASMORRA  ', Probabilidade: ' || r.PROBABILIDADE_DROPE);
+                             ', Código: '  r.CODIGO_EF  ', Probabilidade: ' || r.PROBABILIDADE);
     END LOOP;
 END obter_drope_por_idi_proc;
 
