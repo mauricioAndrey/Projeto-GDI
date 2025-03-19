@@ -1,6 +1,7 @@
+--========================================================================================================================================--
 -----------------------------------------------------
 -- Projeto Físico - Data Definition Language (DDL) --
-----------------------------------------------------
+-----------------------------------------------------
 --========================================================================================================================================--
 -- Jogador --
 
@@ -263,6 +264,145 @@ CREATE TABLE ATRIBUTO (
   CONSTRAINT PK_ATRIBUTO PRIMARY KEY (IDCC, ATRIBUTO),
   CONSTRAINT FK_ATRIBUTO_IDCC FOREIGN KEY (IDCC) REFERENCES CHEFE (IDC) 
 );
+
+--========================================================================================================================================--
+--                                                            -- PL/SQL --                                                                --
+--========================================================================================================================================--
+
+-- Atualiza o valor de tempo acumulado após cada insert e insere na tabela sessão -- 
+CREATE OR REPLACE TRIGGER TRG_ATUALIZA_TEMPO_ACUMULADO
+BEFORE INSERT ON SESSAO
+FOR EACH ROW
+DECLARE
+    V_TEMPO_ANTERIOR NUMBER(6,2);
+BEGIN
+    -- Soma o tempo de todas as sessões anteriores do mesmo jogador
+    SELECT NVL(SUM(DURACAO), 0)
+    INTO V_TEMPO_ANTERIOR
+    FROM SESSAO
+    WHERE IDJ = :NEW.IDJ AND INICIO < :NEW.INICIO;
+
+    -- Atualiza o campo TEMPO_ACUMULADO na nova linha inserida
+    :NEW.TEMPO_ACUMULADO := V_TEMPO_ANTERIOR + :NEW.DURACAO;
+END;
+/
+
+--========================================================================================================================================--
+
+-- Verifica o tempo acumulado para acrescentar uma conquista em desbloqueia --
+CREATE OR REPLACE TRIGGER trg_check_tempo_acumulado
+AFTER INSERT OR UPDATE OF TEMPO_ACUMULADO ON SESSAO
+FOR EACH ROW
+DECLARE
+  t_check NUMBER := 0; 
+BEGIN
+  -- Conquista 100 horas
+  IF :NEW.TEMPO_ACUMULADO >= 100 THEN
+    SELECT COUNT(*) INTO t_check
+    FROM DESBLOQUEIA
+    WHERE IDJ = :NEW.IDJ AND CODIGO_C = 33331;
+
+    IF t_check = 0 THEN
+      INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+      VALUES (:NEW.IDJ, 33331, :NEW.INICIO);
+    END IF;
+  END IF;
+
+  -- Conquista 400 horas
+  IF :NEW.TEMPO_ACUMULADO >= 400 THEN
+    SELECT COUNT(*) INTO t_check
+    FROM DESBLOQUEIA
+    WHERE IDJ = :NEW.IDJ AND CODIGO_C = 33332;
+
+    IF t_check = 0 THEN
+      INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+      VALUES (:NEW.IDJ, 33332, :NEM.INICIO);
+    END IF;
+  END IF;
+
+  -- Conquista 2000 horas
+  IF :NEW.TEMPO_ACUMULADO >= 2000 THEN
+    SELECT COUNT(*) INTO t_check
+    FROM DESBLOQUEIA
+    WHERE IDJ = :NEW.IDJ AND CODIGO_C = 33333;
+
+    IF t_check = 0 THEN
+      INSERT INTO DESBLOQUEIA (IDJ, CODIGO_C, DATA_DESB)
+      VALUES (:NEW.IDJ, 33333, :NEW.INICIO);
+    END IF;
+  END IF;
+END;
+/
+
+--========================================================================================================================================--
+
+-- Trabalha a inserção de baús e estabelece a obrigatoriedade que não é contemplada no modelo de Codd --
+CREATE OR REPLACE PROCEDURE INSERIR_BAU  
+( 
+    new_codigo NUMBER, 
+    new_raridade VARCHAR, 
+    new_capacidade NUMBER, 
+    new_vila NUMBER 
+)  
+IS 
+    vila_existe INT; 
+    bau_existe  INT; 
+BEGIN 
+ 
+    SELECT COUNT(*) 
+    INTO vila_existe 
+    FROM vila  
+    WHERE vila.codigo_e = new_vila AND vila.codigo_b IS NULL; 
+
+    SELECT COUNT(*) 
+    INTO bau_existe  
+    FROM bau  
+    WHERE bau.codigo = new_codigo; 
+ 
+    IF vila_existe = 1 THEN 
+        IF bau_existe = 0 THEN 
+            INSERT INTO bau (CODIGO, RARIDADE, CAPACIDADE) VALUES (new_codigo, new_raridade, new_capacidade); 
+        END IF; 
+ 
+        UPDATE vila  
+            SET codigo_b = new_codigo 
+        WHERE codigo_e = new_vila; 
+    ELSE 
+        RAISE_APPLICATION_ERROR(-20002, 'Vila inválida'); 
+    END IF; 
+END;
+/
+
+--========================================================================================================================================--
+
+-- Cálcula a distância entre duas estruturas, se for a mesma, retorna 0 --
+CREATE OR REPLACE FUNCTION DISTANCIA_ESTRUTURAS (
+    cod1 NUMBER, 
+    cod2 NUMBER
+) 
+RETURN NUMBER IS 
+    dif_x NUMBER; 
+    dif_y NUMBER; 
+    dif_z NUMBER; 
+    distance NUMBER; 
+BEGIN 
+
+    -- Obtém as diferenças nas coordenadas X, Y e Z em uma única consulta
+    SELECT E1.X - E2.X, 
+           E1.Y - E2.Y, 
+           E1.Z - E2.Z 
+    INTO dif_x, dif_y, dif_z 
+    FROM ESTRUTURA E1, ESTRUTURA E2 
+    WHERE E1.CODIGO = cod1 
+      AND E2.CODIGO = cod2; 
+
+    -- Calcula a distância usando a fórmula da distância euclidiana
+    distance := SQRT(POWER(dif_x, 2) + POWER(dif_y, 2) + POWER(dif_z, 2)); 
+
+    -- Retorna a distância calculada 
+    RETURN distance;         
+END;
+/
 
 --========================================================================================================================================--
 ---------------------------------
