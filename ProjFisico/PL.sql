@@ -168,11 +168,6 @@ RETURN NUMBER IS
     dif_z NUMBER; 
     distance NUMBER; 
 BEGIN 
-    -- Se os códigos forem iguais, retorna NULL 
-    IF cod1 = cod2 THEN 
-        RETURN NULL; 
-    END IF; 
-
     -- Obtém as diferenças nas coordenadas X, Y e Z em uma única consulta
     SELECT E1.X - E2.X, 
            E1.Y - E2.Y, 
@@ -180,7 +175,8 @@ BEGIN
     INTO dif_x, dif_y, dif_z 
     FROM ESTRUTURA E1, ESTRUTURA E2 
     WHERE E1.CODIGO = cod1 
-      AND E2.CODIGO = cod2; 
+      AND E2.CODIGO = cod2
+      AND E1.SEED_M = E2_SEED_M; 
 
     -- Calcula a distância usando a fórmula da distância euclidiana
     distance := SQRT(POWER(dif_x, 2) + POWER(dif_y, 2) + POWER(dif_z, 2)); 
