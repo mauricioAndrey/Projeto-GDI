@@ -1713,6 +1713,35 @@ INSERT INTO ALDEAO (CODIGO_EV, PROFISSAO) VALUES (251, 'Bibliotecário');
 
 --========================================================================================================================================--
 -- Baú -- Procedure --
+
+BEGIN
+    -- Inserir múltiplos baús
+    INSERIR_BAU(00001, 'Madeira',  15, 001);
+    INSERIR_BAU(00002, 'Cobre',    15, 011);
+    INSERIR_BAU(00002, 'Cobre',    15, 101);
+    INSERIR_BAU(00003, 'Bronze',   15, 121);
+    INSERIR_BAU(00003, 'Bronze',   15, 241);
+    INSERIR_BAU(00004, 'Ferro',    15, 031);
+    INSERIR_BAU(00004, 'Ferro',    15, 231);
+    INSERIR_BAU(00005, 'Ouro',     15, 131);
+    INSERIR_BAU(00005, 'Ouro',     15, 211);
+    INSERIR_BAU(00006, 'Diamante', 16, 051);
+    INSERIR_BAU(00006, 'Diamante', 16, 141);
+    INSERIR_BAU(00016, 'Diamante', 16, 061);
+    INSERIR_BAU(00016, 'Diamante', 16, 111);
+    INSERIR_BAU(00026, 'Diamante', 16, 021);
+    INSERIR_BAU(00026, 'Diamante', 16, 221);
+    INSERIR_BAU(00036, 'Diamante', 16, 041);
+    INSERIR_BAU(00036, 'Diamante', 16, 201);
+    INSERIR_BAU(00007, 'Lendário', 16, 106);
+
+    DBMS_OUTPUT.PUT_LINE('Todos os baús foram inseridos com sucesso!');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir um ou mais baús: ' || SQLERRM);
+END;
+/
+  
 --========================================================================================================================================--
 -- Guarda --
 
