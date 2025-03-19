@@ -290,7 +290,7 @@ END;
 --========================================================================================================================================--
 
 -- Verifica o tempo acumulado para acrescentar uma conquista em desbloqueia --
-CREATE OR REPLACE TRIGGER trg_check_tempo_acumulado
+CREATE OR REPLACE TRIGGER TRG_VERIFICA_TEMPO_ACUMULADO
 AFTER INSERT OR UPDATE OF TEMPO_ACUMULADO ON SESSAO
 FOR EACH ROW
 DECLARE
@@ -336,9 +336,36 @@ END;
 
 --========================================================================================================================================--
 
+-- Verifica se o jogador tem acesso ao mundo antes de prossegir com o insert no ternário --
+CREATE OR REPLACE TRIGGER TRG_VALIDA_INSERIR_EM_POSSUI 
+BEFORE INSERT ON POSSUI 
+FOR EACH ROW 
+DECLARE 
+    v_has_acesso NUMBER; 
+BEGIN 
+    -- Verifica se o jogador tem acesso ao servidor associado ao mundo 
+    SELECT COUNT(*) 
+    INTO v_has_acesso
+    FROM ACESSO A
+    JOIN MUNDO M ON A.IDS = M.IDS -- Junta a tabela MUNDO (M) com ACESSO (A)
+    WHERE A.IDJ = :NEW.IDJ -- ID do jogador que está inserindo
+      AND M.IDS = :NEW.IDSM -- Servidor do mundo onde o item está sendo adicionado
+      AND M.INDICE = :NEW.INDICE_M; -- Índice do mundo
+
+    -- Se não houver acesso, cancela a inserção 
+    IF v_has_acesso = 0 THEN 
+        RAISE_APPLICATION_ERROR( 
+            -20001,
+            'Jogador não tem acesso ao servidor do mundo onde o item está sendo inserido.' 
+        ); 
+    END IF; 
+END;
+/
+
+--========================================================================================================================================--
+
 -- Trabalha a inserção de baús e estabelece a obrigatoriedade que não é contemplada no modelo de Codd --
-CREATE OR REPLACE PROCEDURE INSERIR_BAU  
-( 
+CREATE OR REPLACE PROCEDURE INSERIR_BAU  ( 
     new_codigo NUMBER, 
     new_raridade VARCHAR, 
     new_capacidade NUMBER, 
@@ -348,17 +375,20 @@ IS
     vila_existe INT; 
     bau_existe  INT; 
 BEGIN 
- 
+
+    -- Verifica se existem vilas com o código digitado 
     SELECT COUNT(*) 
     INTO vila_existe 
     FROM vila  
     WHERE vila.codigo_e = new_vila AND vila.codigo_b IS NULL; 
 
+    -- Verifica se já existe algum baú com o mesmo código na tabela baú
     SELECT COUNT(*) 
     INTO bau_existe  
     FROM bau  
     WHERE bau.codigo = new_codigo; 
- 
+  
+    -- Se a vila existir, insert bau (se nõ houver baú com o código) e atualiza vila ou, apenas, atualiza vila (já existe o baú)
     IF vila_existe = 1 THEN 
         IF bau_existe = 0 THEN 
             INSERT INTO bau (CODIGO, RARIDADE, CAPACIDADE) VALUES (new_codigo, new_raridade, new_capacidade); 
