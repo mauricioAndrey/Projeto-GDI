@@ -167,7 +167,24 @@ RETURN NUMBER IS
     dif_y NUMBER; 
     dif_z NUMBER; 
     distance NUMBER; 
+    seed1 CHAR(50);
+    seed2 CHAR(50);
 BEGIN 
+
+    SELECT SEED_M
+    INTO seed1
+    FROM ESTRUTURA
+    WHERE CODIGO = cod1;
+
+    SELECT SEED_M
+    INTO seed2
+    FROM ESTRUTURA
+    WHERE CODIGO = cod2;
+
+    IF seed1 <> seed2 THEN
+        RETURN NULL;
+    END IF;
+    
     -- Obtém as diferenças nas coordenadas X, Y e Z em uma única consulta
     SELECT E1.X - E2.X, 
            E1.Y - E2.Y, 
@@ -175,8 +192,7 @@ BEGIN
     INTO dif_x, dif_y, dif_z 
     FROM ESTRUTURA E1, ESTRUTURA E2 
     WHERE E1.CODIGO = cod1 
-      AND E2.CODIGO = cod2
-      AND E1.SEED_M = E2_SEED_M; 
+      AND E2.CODIGO = cod2;
 
     -- Calcula a distância usando a fórmula da distância euclidiana
     distance := SQRT(POWER(dif_x, 2) + POWER(dif_y, 2) + POWER(dif_z, 2)); 
@@ -195,7 +211,7 @@ BEGIN
 
     -- Exibe o resultado
     IF distancia IS NULL THEN
-        DBMS_OUTPUT.PUT_LINE('As estruturas são iguais.');
+        DBMS_OUTPUT.PUT_LINE('As estruturas estão em seeds diferentes!.');
     ELSE
         DBMS_OUTPUT.PUT_LINE('Distância calculada: ' || TO_CHAR(distancia, '999999.99'));
     END IF;
