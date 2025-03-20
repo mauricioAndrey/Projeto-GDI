@@ -352,13 +352,15 @@ BEGIN
 END;
 
 -- Para lidar com a inserção única na tabela amizade --
+-- Retira a chave primária duplicada
 ALTER TABLE AMIZADE
-DROP CONSTRAINT PK_Amizade; -- Retira a chave primária duplicada
+DROP CONSTRAINT PK_Amizade; 
 
+-- Adiciona a chave primária única
 ALTER TABLE AMIZADE
-ADD CONSTRAINT PK_Amizade PRIMARY KEY (ID1, ID2); -- Adiciona a chave primária única
+ADD CONSTRAINT PK_Amizade PRIMARY KEY (ID1, ID2); 
 
-=======
+--========================================================================================================================================--
 
 -- Verifica se o jogador tem acesso ao mundo antes de prossegir com o insert no ternário --
 CREATE OR REPLACE TRIGGER TRG_VALIDA_INSERIR_EM_POSSUI 
