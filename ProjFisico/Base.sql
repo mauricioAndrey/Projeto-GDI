@@ -340,16 +340,18 @@ END;
 CREATE OR REPLACE TRIGGER TRG_ORDENAR_AMIZADE
 BEFORE INSERT ON AMIZADE
 FOR EACH ROW
+DECLARE
+    TEMP NUMBER; -- Declara uma variável temporária
 BEGIN
-    -- Garante que ID1 sempre seja o menor ID
-    IF :NEW.ID1 > :NEW.ID2 THEN
+    -- Garante que IDJ1 sempre seja o menor IDJ2
+    IF :NEW.IDJ1 > :NEW.IDJ2 THEN
         -- Troca os valores para manter a ordem
-        DECLARE TEMP NUMBER;
-        TEMP := :NEW.ID1;
-        :NEW.ID1 := :NEW.ID2;
-        :NEW.ID2 := TEMP;
+        TEMP := :NEW.IDJ1;       
+        :NEW.IDJ1 := :NEW.IDJ2; 
+        :NEW.IDJ2 := TEMP;      
     END IF;
 END;
+/
 
 -- Para lidar com a inserção única na tabela amizade --
 -- Retira a chave primária duplicada
@@ -358,7 +360,7 @@ DROP CONSTRAINT PK_Amizade;
 
 -- Adiciona a chave primária única
 ALTER TABLE AMIZADE
-ADD CONSTRAINT PK_Amizade PRIMARY KEY (ID1, ID2); 
+ADD CONSTRAINT PK_Amizade PRIMARY KEY (IDJ1, IDJ2); 
 
 --========================================================================================================================================--
 
