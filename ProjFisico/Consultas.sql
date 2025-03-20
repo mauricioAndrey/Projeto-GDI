@@ -7,7 +7,7 @@ SELECT J.USERNAME, COUNT(*) AS NUM_SESSOES
 FROM SESSAO S
 INNER JOIN JOGADOR J ON J.ID = S.IDJ
 GROUP BY J.USERNAME
-HAVING NUM_SESSOES > 100;
+HAVING COUNT(*) > 100;
 
 --========================================================================================================================================--
 
@@ -34,11 +34,12 @@ WHERE P.IDCS IS NULL;
 --========================================================================================================================================--
 
 -- Quais os códigos das estruturas que não são fortaleza nem vila? --
-SELECT CODIGO
-FROM ESTRUTURA EXCEPT (
-    SELECT CODIGO_E FROM FORTALEZA 
+SELECT TO_CHAR(CODIGO, '000')
+FROM ESTRUTURA
+MINUS (
+    SELECT TO_CHAR(CODIGO_E, '000') FROM FORTALEZA 
     UNION 
-    SELECT CODIGO_E FROM VILA
+    SELECT TO_CHAR(CODIGO_E, '000') FROM VILA
 );
 
 --========================================================================================================================================--
@@ -62,7 +63,7 @@ WHERE NOT EXISTS(SELECT * FROM PUNIDO P WHERE P.IDJA = J.ID);
 --========================================================================================================================================--
 
 -- Quais as coordenadas dos chefes que possuem o atributo fogo? --
-SELECT C.IDC AS CHEFE, E.x, E.y, E.z
+SELECT TO_CHAR(C.IDC, '000') AS CHEFE, E.x, E.y, E.z
 FROM CHEFE C INNER JOIN Estrutura E ON C.Codigo_EF = E.Codigo 
 WHERE C.IDC IN (
     SELECT A.IDCC
@@ -138,7 +139,7 @@ BEGIN
 
     -- Exibe o resultado
     IF distancia IS NULL THEN
-        DBMS_OUTPUT.PUT_LINE('Impossível calcular distância: as estruturas estão em seeds diferentes!!');
+        DBMS_OUTPUT.PUT_LINE('Impossível calcular distância: as estruturas estão em seed diferentes!!');
     ELSE
         DBMS_OUTPUT.PUT_LINE('Distância calculada: ' || TO_CHAR(distancia, '999999.99'));
     END IF;
