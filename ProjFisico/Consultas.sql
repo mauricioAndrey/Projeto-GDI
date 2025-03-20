@@ -2,7 +2,7 @@
 --                                                            -- Consultas --                                                              --
 --========================================================================================================================================--
 
--- Quais jogadores possuem mais de 100 sessões? -- (GROUP BY / HAVING / JUNÇÃO INTERNA) --
+-- Quais jogadores possuem mais de 100 sessões? --
 SELECT J.USERNAME, COUNT(*) AS NUM_SESSOES
 FROM SESSAO S
 INNER JOIN JOGADOR J ON J.ID = S.IDJ
@@ -11,7 +11,7 @@ HAVING NUM_SESSOES > 100;
 
 --========================================================================================================================================--
 
--- Quais itens que são produtos, mas não são matérias primas? -- (ANTI JUNÇÃO / SEMI JUNÇÃO / SUBCONSULTA LINHA) --
+-- Quais itens que são produtos, mas não são matérias primas? --
 SELECT * 
 FROM ITEM 
 WHERE ID NOT IN (
@@ -25,15 +25,15 @@ ID IN (
 
 --========================================================================================================================================--
 
--- Quais os IDs dos servos que não preotegem fortalezas -- (JUNÇÃO EXTERNA) --
+-- Quais os IDs dos servos que não preotegem fortalezas --
 SELECT IDC
-FROM SERVO LEFT JOIN PROTEGE 
-ON SERVO.IDC = PROTEGE.IDCS 
-WHERE PROTEGE.IDCS IS NULL;
+FROM SERVO S 
+LEFT JOIN PROTEGE P ON S.IDC = P.IDCS 
+WHERE P.IDCS IS NULL;
 
 --========================================================================================================================================--
 
--- Quais os códigos das estruturas que não são fortaleza nem vila? -- (OPERAÇÃO DE CONJUNTO) --
+-- Quais os códigos das estruturas que não são fortaleza nem vila? --
 SELECT CODIGO
 FROM ESTRUTURA EXCEPT (
     SELECT CODIGO_E FROM FORTALEZA 
@@ -43,7 +43,7 @@ FROM ESTRUTURA EXCEPT (
 
 --========================================================================================================================================--
 
--- Quais são as coordenadas da estrutura em que o chefe de ID = 129 comanda? -- (SUBCONSULTA ESCALAR) --
+-- Quais são as coordenadas da estrutura em que o chefe de ID = 129 comanda? --
 SELECT X, Y, Z
 FROM ESTRUTURA
 WHERE CODIGO = (
@@ -54,14 +54,14 @@ WHERE CODIGO = (
 
 --========================================================================================================================================--
 
--- Quais os usernames dos jogadores não foram punidos em um servidor? -- (JUNÇÃO EXTERNA / SUBCONSULTA TABELA) --
+-- Quais os usernames dos jogadores não foram punidos em um servidor? --
 SELECT J.USERNAME
 FROM JOGADOR J
 WHERE NOT EXISTS(SELECT * FROM PUNIDO P WHERE P.IDJA = J.ID);
 
 --========================================================================================================================================--
 
--- Quais as coordenadas dos chefes que possuem o atributo fogo? -- (JUNÇÃO INTERNA / SUBCONSULTA LINHA) --
+-- Quais as coordenadas dos chefes que possuem o atributo fogo? --
 SELECT C.IDC AS CHEFE, E.x, E.y, E.z
 FROM CHEFE C INNER JOIN Estrutura E ON C.Codigo_EF = E.Codigo 
 WHERE C.IDC IN (
@@ -72,7 +72,7 @@ WHERE C.IDC IN (
 
 --========================================================================================================================================--
 
--- Quais as quantidades de cada tipo de item que o jogador Gabriel possui? -- (JUNÇÃO INTERNA / SUBCONSULTA LINHA / GROUP BY) --
+-- Quais as quantidades de cada tipo de item que o jogador Gabriel possui? --
 SELECT I.TIPO AS TIPO, SUM(P.QUANTIDADE) AS Total
 FROM POSSUI P
 INNER JOIN ITEM I ON P.IDI = I.ID
@@ -86,7 +86,7 @@ ORDER BY Total DESC;
 
 --========================================================================================================================================--
 
--- Quais os nomes das criaturas, juntamente com seu atributo e localização, que dropam obsidiana com sua respectiva probabilidade -- (JUNÇÃO INTERNA) --
+-- Quais os nomes das criaturas, juntamente com seu atributo e localização, que dropam obsidiana com sua respectiva probabilidade --
 SELECT
     C.NOME,
     S.ATRIBUTO,
@@ -101,7 +101,7 @@ ORDER BY P.CODIGO_EF ASC, S.ATRIBUTO ASC;
 
 --========================================================================================================================================--
 
--- Quais os nomes e os atributos dos chefes que comandam alguma fortaleza e dropam obsidiana com sua respectiva probabilidade -- (JUNÇÃO INTERNA / GROUP BY) --
+-- Quais os nomes e os atributos dos chefes que comandam alguma fortaleza e dropam obsidiana com sua respectiva probabilidade --
 SELECT 
     C.NOME, 
     LISTAGG(A.ATRIBUTO, ', ') WITHIN GROUP (ORDER BY A.ATRIBUTO) AS ATRIBUTOS,
@@ -117,7 +117,7 @@ ORDER BY B.CODIGO_EF ASC, C.NOME ASC;
 
 --========================================================================================================================================--
 
--- Quais os mundos por servidor? -- (JUNÇÃO EXTERNA / GROUP BY) --
+-- Quais os mundos por servidor? --
 SELECT 
     S.ID AS ID_SERVIDOR,
     S.NOME AS NOME_SERVIDOR,
