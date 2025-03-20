@@ -138,7 +138,7 @@ BEGIN
 
     -- Exibe o resultado
     IF distancia IS NULL THEN
-        DBMS_OUTPUT.PUT_LINE('As estruturas são iguais.');
+        DBMS_OUTPUT.PUT_LINE('Impossível calcular distância: as estruturas estão em seeds diferentes!!');
     ELSE
         DBMS_OUTPUT.PUT_LINE('Distância calculada: ' || TO_CHAR(distancia, '999999.99'));
     END IF;
