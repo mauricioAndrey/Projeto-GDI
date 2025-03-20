@@ -433,7 +433,7 @@ END;
 
 --========================================================================================================================================--
 
--- Cálcula a distância entre duas estruturas, se for a mesma, retorna 0 --
+-- Cálcula a distância entre duas estruturas da mesma seed --
 CREATE OR REPLACE FUNCTION DISTANCIA_ESTRUTURAS (
     cod1 NUMBER, 
     cod2 NUMBER
@@ -442,22 +442,35 @@ RETURN NUMBER IS
     dif_x NUMBER; 
     dif_y NUMBER; 
     dif_z NUMBER; 
+    seed1 CHAR(50);
+    seed2 CHAR(50);
     distance NUMBER; 
 BEGIN 
 
-    -- Obtém as diferenças nas coordenadas X, Y e Z em uma única consulta
+    SELECT SEED_M
+    INTO seed1
+    FROM ESTRUTURA
+    WHERE CODIGO = cod1;
+    
+    SELECT SEED_M
+    INTO seed2
+    FROM ESTRUTURA
+    WHERE CODIGO = cod2;
+
+    IF seed1 <> seed2 THEN
+        RETURN NULL;
+    END IF;
+
     SELECT E1.X - E2.X, 
            E1.Y - E2.Y, 
            E1.Z - E2.Z 
     INTO dif_x, dif_y, dif_z 
     FROM ESTRUTURA E1, ESTRUTURA E2 
     WHERE E1.CODIGO = cod1 
-      AND E2.CODIGO = cod2; 
+    AND E2.CODIGO = cod2; 
 
-    -- Calcula a distância usando a fórmula da distância euclidiana
     distance := SQRT(POWER(dif_x, 2) + POWER(dif_y, 2) + POWER(dif_z, 2)); 
 
-    -- Retorna a distância calculada 
     RETURN distance;         
 END;
 /
