@@ -14,7 +14,7 @@
     <nodes xmi:type="eer:Relationship" xmi:id="_7K9q0PN_Ee-prMQ_6vvSlg" name="Joga" isIdentifier="true" relationshipLink="_CnnCkPOAEe-prMQ_6vvSlg _EMLzsPOAEe-prMQ_6vvSlg"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_DZuKEPOCEe-prMQ_6vvSlg" name="Início" isNull="false" isOrdered="true" type="DISCRIMINATOR" dataType="TIMESTAMP" AttributeLinkTarget="_eeA20POCEe-prMQ_6vvSlg"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_FshTIPOCEe-prMQ_6vvSlg" name="Duração" comment="Em minutos" isNull="false" dataType="INTEGER" AttributeLinkTarget="_drChwPOCEe-prMQ_6vvSlg"/>
-    <nodes xmi:type="eer:Attribute" xmi:id="_QzRlIPOCEe-prMQ_6vvSlg" name="Horas Acumuladas" isNull="false" type="DERIVED" dataType="INTEGER" AttributeLinkTarget="_fUvDcPOCEe-prMQ_6vvSlg"/>
+    <nodes xmi:type="eer:Attribute" xmi:id="_QzRlIPOCEe-prMQ_6vvSlg" name="Tempo Acumulado" isNull="false" type="DERIVED" dataType="INTEGER" AttributeLinkTarget="_fUvDcPOCEe-prMQ_6vvSlg"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_AgPMwPOIEe-prMQ_6vvSlg" name="Código" isNull="false" isUnique="true" type="IDENTIFIER" dataType="INTEGER" AttributeLinkTarget="_IM9n4POIEe-prMQ_6vvSlg"/>
     <nodes xmi:type="eer:Relationship" xmi:id="_TdgIAPOIEe-prMQ_6vvSlg" name="Desbloqueia" AttributeLinkSource="_u4s44POIEe-prMQ_6vvSlg" relationshipLink="_Wm4TwPOIEe-prMQ_6vvSlg _XX3r0POIEe-prMQ_6vvSlg"/>
     <nodes xmi:type="eer:Attribute" xmi:id="_sCVvwPOIEe-prMQ_6vvSlg" name="Data" comment="Data em que a conquista foi desbloqueada, um jogador não poderá desbloquear a mesma conquista mais de 1 vez." isNull="false" isOrdered="true" dataType="TIMESTAMP" AttributeLinkTarget="_u4s44POIEe-prMQ_6vvSlg"/>

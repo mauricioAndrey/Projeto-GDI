@@ -334,8 +334,31 @@ BEGIN
   END IF;
 END;
 /
-
 --========================================================================================================================================--
+
+-- Lida com a duplicada na tabela de amizade, onde não haverá redundância entre (1,2) e (2,1) --
+CREATE OR REPLACE TRIGGER TRG_ORDENAR_AMIZADE
+BEFORE INSERT ON AMIZADE
+FOR EACH ROW
+BEGIN
+    -- Garante que ID1 sempre seja o menor ID
+    IF :NEW.ID1 > :NEW.ID2 THEN
+        -- Troca os valores para manter a ordem
+        DECLARE TEMP NUMBER;
+        TEMP := :NEW.ID1;
+        :NEW.ID1 := :NEW.ID2;
+        :NEW.ID2 := TEMP;
+    END IF;
+END;
+
+-- Para lidar com a inserção única na tabela amizade --
+ALTER TABLE AMIZADE
+DROP CONSTRAINT PK_Amizade; -- Retira a chave primária duplicada
+
+ALTER TABLE AMIZADE
+ADD CONSTRAINT PK_Amizade PRIMARY KEY (ID1, ID2); -- Adiciona a chave primária única
+
+=======
 
 -- Verifica se o jogador tem acesso ao mundo antes de prossegir com o insert no ternário --
 CREATE OR REPLACE TRIGGER TRG_VALIDA_INSERIR_EM_POSSUI 
@@ -434,30 +457,6 @@ BEGIN
     RETURN distance;         
 END;
 /
-
---========================================================================================================================================--
-
--- Lida com a duplicada na tabela de amizade, onde não haverá redundância entre (1,2) e (2,1) --
-CREATE OR REPLACE TRIGGER TRG_ORDENAR_AMIZADE
-BEFORE INSERT ON AMIZADE
-FOR EACH ROW
-BEGIN
-    -- Garante que ID1 sempre seja o menor ID
-    IF :NEW.ID1 > :NEW.ID2 THEN
-        -- Troca os valores para manter a ordem
-        DECLARE TEMP NUMBER;
-        TEMP := :NEW.ID1;
-        :NEW.ID1 := :NEW.ID2;
-        :NEW.ID2 := TEMP;
-    END IF;
-END;
-
--- Para lidar com a inserção única na tabela amizade --
-ALTER TABLE AMIZADE
-DROP CONSTRAINT PK_Amizade; -- Retira a chave primária duplicada
-
-ALTER TABLE AMIZADE
-ADD CONSTRAINT PK_Amizade PRIMARY KEY (ID1, ID2); -- Adiciona a chave primária única
 
 --========================================================================================================================================--
 ---------------------------------
