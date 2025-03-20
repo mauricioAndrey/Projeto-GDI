@@ -130,6 +130,52 @@ ORDER BY S.ID;
 
 --========================================================================================================================================--
 
+-- Quais os IDs dos jogadores e as durações de suas sessões que foram maiores que a média geral?
+SELECT S1.IDJ, S1.DURACAO
+FROM SESSAO S1
+WHERE S1.DURACAO > (
+    SELECT AVG(S2.DURACAO)
+    FROM SESSAO S2    
+);
+
+--========================================================================================================================================--
+
+-- Quais as sessões cujas durações foram maiores que a média de seu jogador?
+SELECT *
+FROM SESSAO S1
+WHERE S1.DURACAO > (
+    SELECT AVG(S2.DURACAO)
+    FROM SESSAO S2
+    WHERE S1.IDJ = S2.IDJ
+);
+
+--========================================================================================================================================--
+
+-- Quais os usernames dos jogadores que possuem ao menos uma sessão com mais de 27 horas?
+SELECT J.USERNAME
+FROM JOGADOR J
+WHERE EXISTS (
+    SELECT *
+    FROM SESSAO S
+    WHERE J.ID = S.IDJ AND S.DURACAO > 27
+);
+
+--========================================================================================================================================--
+
+-- Quais são os jogadores com a amizade mais antiga?
+SELECT J1.USERNAME AS NOME1, J2.USERNAME AS NOME2
+FROM JOGADOR J1, JOGADOR J2 
+WHERE (J1.ID, J2.ID) = (
+    SELECT IDJ1, IDJ2
+    FROM AMIZADE
+    WHERE DATA_DE_INICIO = (
+        SELECT MIN(DATA_DE_INICIO)
+        FROM AMIZADE
+    )
+);
+
+--========================================================================================================================================--
+
 -- Exemplo de uso da função --
 DECLARE
     distancia NUMBER;
@@ -139,7 +185,7 @@ BEGIN
 
     -- Exibe o resultado
     IF distancia IS NULL THEN
-        DBMS_OUTPUT.PUT_LINE('Impossível calcular distância: as estruturas estão em seed diferentes!!');
+        DBMS_OUTPUT.PUT_LINE('Impossível calcular distância: as estruturas estão em seeds diferentes!!');
     ELSE
         DBMS_OUTPUT.PUT_LINE('Distância calculada: ' || TO_CHAR(distancia, '999999.99'));
     END IF;
